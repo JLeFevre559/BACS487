@@ -10,3 +10,4 @@
     * Based on user input of risk tolerance, investment goals, stock ratings, sentiment, environmental analysis
 * User prefrences stored in account?
     * (Maybe 3rd party auth so we don't need to worry about storing passwords)
+* Stock volatility analysis
