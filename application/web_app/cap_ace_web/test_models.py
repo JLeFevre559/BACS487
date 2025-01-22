@@ -92,3 +92,70 @@ class MultipleChoiceTest(TestCase):
         distractor = self.distractors[0]
         expected_str = f"Distractor for {self.mc_question.id}: {distractor.distractor}"
         self.assertEqual(str(distractor), expected_str)
+
+from django.test import TestCase, Client
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.urls import reverse
+
+class UserAuthenticationTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.test_user = User.objects.create_user(
+            username='testuser',
+            email='test@example.com',
+            password='testpass123'
+        )
+        
+    def test_user_creation(self):
+        """Test that we can create a user with the default Django User model"""
+        user = User.objects.get(username='testuser')
+        self.assertEqual(user.email, 'test@example.com')
+        self.assertTrue(user.is_active)
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        
+    def test_user_authentication(self):
+        """Test that created users can authenticate"""
+        user = authenticate(username='testuser', password='testpass123')
+        self.assertIsNotNone(user)
+        self.assertEqual(user.username, 'testuser')
+        
+    def test_wrong_password(self):
+        """Test that authentication fails with wrong password"""
+        user = authenticate(username='testuser', password='wrongpass')
+        self.assertIsNone(user)
+        
+    def test_create_superuser(self):
+        """Test creation of superuser"""
+        admin_user = User.objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='adminpass123'
+        )
+        self.assertTrue(admin_user.is_superuser)
+        self.assertTrue(admin_user.is_staff)
+        
+    def test_email_optional(self):
+        """Test that email is optional for user creation"""
+        user = User.objects.create_user(
+            username='noemail',
+            password='testpass123'
+        )
+        self.assertEqual(user.email, '')
+        self.assertTrue(user.is_active)
+
+    def test_username_unique(self):
+        """Test that usernames must be unique"""
+        with self.assertRaises(Exception):
+            User.objects.create_user(
+                username='testuser',  # This username already exists
+                password='anotherpass123'
+            )
+            
+    def test_user_inactive(self):
+        """Test that inactive users cannot authenticate"""
+        self.test_user.is_active = False
+        self.test_user.save()
+        user = authenticate(username='testuser', password='testpass123')
+        self.assertIsNone(user)
