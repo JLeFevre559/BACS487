@@ -1,15 +1,27 @@
 {% load static %}
-<nav class="navbar-box">
-    <div class="navbar">
-        <div class="navbar-div">
-            <a href="/" class="navbar-button">Navbar Button 1</a>
-        </div>
-            <div class="navbar-div">
-            <a href="/" class="navbar-link"><img src="{% static '/images/template-icon.png' %}" alt="Template Icon"  class="navbar-photo"></a>
-        </div>
-        <div class="navbar-div">
-            <a href="/" class="navbar-button">Navbar Button 2</a>
-            <a href="/" class="navbar-button">Navbar Button 3</a>
-        </div>
-    </div>
+<link rel="stylesheet" href="/static/StyleSheet.css">
+
+<nav class="navbar navbar-expand-sm navbar-dark text-light">
+        <div class="container">
+    
+            <a class="navbar-brand text-light" href="/">Cashoo!</a>
+
+            <ul class="navbar-nav text-light ml-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link text-light" href = "{% url 'learning_home' %}">Learning Modules</a> <!-- add proper link-->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light">Progress</a> <!-- add proper link-->
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link text-light">Login</a> <!-- add proper link-->
+                </li>
+            </ul>
+            
+            
+
+                
 </nav>
+
