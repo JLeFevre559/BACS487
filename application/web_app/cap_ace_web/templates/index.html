@@ -1,106 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kashoo - Personal Financial Learning</title>
-  <link rel="stylesheet" href="theme.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
+{% extends 'theme.html' %}
 
-    .header {
-      background-color: #0056b3;  
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+{% block title %}
+{% endblock title %}
 
-    .main-content {
-      text-align: center;
-      margin: 40px;
-    }
+{% block content %}
 
-    .button {
-      background-color: #007bff;
-      color: white;
-      padding: 15px 30px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 18px;
-    }
-
-    .button:hover {
-      background-color: #0056b3;
-    }
-
-    .card {
-      display: inline-block;
-      width: 25%;
-      background-color: #007bff;
-      color: white;
-      margin: 15px;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .card h3 {
-      font-size: 22px;
-    }
-
-    .footer {
-      text-align: center;
-      padding: 10px;
-      background-color: #222;
-      color: white;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-
-    .stock-price, .crypto-price {
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  
-  <div class="header">
-    <h1>Welcome to Kashoo!</h1>
-    <p>Your Personal Financial Learning Journey Starts Here</p>
-  </div>
-
-  
-  <div class="main-content">
-    <h2>Get Started with Financial Learning</h2>
-    <div class="card">
-      <h3>Stocks</h3>
-      <p class="stock-price" id="stock-price">Loading...</p>
-    </div>
-    <div class="card">
-      <h3>Crypto</h3>
-      <p class="crypto-price" id="crypto-price">Loading...</p>
-    </div>
-    <div class="card">
-      <h3>News</h3>
-      <p><a href="https://www.cnbc.com" target="_blank" class="button">Check Latest News</a></p>
-    </div>
-    <div class="card">
-      <h3>Learning</h3>
-      <p><a href="customizelearning.html" class="button">Customize My Learning</a></p>
-    </div>
-  </div>
-
-  
-  <div class="footer">
-    <p>&copy; 2025 Kashoo. All Rights Reserved.</p>
-  </div>
+<h1 class="text-primary">Example</h1>
+<div class="landingBox">
+  <p class="text-box">Hello World</p>
+</div>
+<div>
+  <a href="" class="navbar-button">Example Button 1</a>
+  <a href="" class="navbar-button">Example Button 2</a>
+</div>
 
   
   <script>
