@@ -102,18 +102,17 @@ WSGI_APPLICATION = "vercel_app.wsgi.app"
 #         "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase"}
 #     }
 # else:
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": config("POSTGRES_DATABASE"),
-#         "USER": config("POSTGRES_USER"),
-#         "PASSWORD": config("POSTGRES_PASSWORD"),
-#         "HOST": config("POSTGRES_HOST"),
-#         "OPTIONS": {
-#             "sslmode": "require"  # Neon requires SSL connections
-#         },
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "djongo",
+#             "NAME": "mongoDB",
+#             "CLIENT": {
+#                 "host": config("DB_HOST"),
+#                 "username": config("DB_USER"),
+#                 "password": config("DB_PASS"),
+#             },
+#         }
 #     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
