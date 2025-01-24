@@ -14,47 +14,4 @@
   <a href="" class="navbar-button">Example Button 2</a>
 </div>
 
-  
-  <script>
-    
-    async function fetchStockPrice() {
-      const stockSymbol = 'AAPL'; // 
-      const apiKey = 'YOUR_ALPHA_VANTAGE_API_KEY';  
-      const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&interval=1min&apikey=${apiKey}`;
-
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data['Time Series (1min)']) {
-        const latestTime = Object.keys(data['Time Series (1min)'])[0];
-        const latestPrice = data['Time Series (1min)'][latestTime]['1. open'];
-        document.getElementById('stock-price').textContent = `$${latestPrice}`;
-      } else {
-        document.getElementById('stock-price').textContent = 'Error fetching data';
-      }
-    }
-
-    
-    async function fetchCryptoPrice() {
-      const url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd';
-      const response = await fetch(url);
-      const data = await response.json();
-
-      const bitcoinPrice = data.bitcoin.usd;
-      const ethereumPrice = data.ethereum.usd;
-
-      document.getElementById('crypto-price').innerHTML = `
-        Bitcoin: $${bitcoinPrice}<br>
-        Ethereum: $${ethereumPrice}
-      `;
-    }
-
-    
-    window.onload = () => {
-      fetchStockPrice();
-      fetchCryptoPrice();
-    };
-  </script>
-</body>
-</html>
-
+{% endblock content %}
