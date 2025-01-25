@@ -7,7 +7,7 @@
 }
 
 nav {
-  background-color: #1911b5; 
+  background-color: var(--bs-blue); 
   color: white; 
 
 }

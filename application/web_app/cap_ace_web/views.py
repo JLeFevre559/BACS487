@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView, DetailView
+from .models import MultipleChoice, MultipleChoiceDistractor
 
 class Index(TemplateView):
     template_name = "index.html"

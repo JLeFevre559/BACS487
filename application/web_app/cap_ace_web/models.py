@@ -1,5 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+    
+class Cap_Ace_User(AbstractUser):
+    CATEGORIES = [
+        ('MC', 'Multiple Choice'),
+        ('FIB', 'Fill in Blank'),
+        ('MAD', 'Match and Drag'),
+        ('FC', 'Flash Card'),
+        ('BS', 'Budget Simulation')
+    ]
+    
+    last_done = models.CharField(
+        max_length=3,
+        choices=CATEGORIES,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return self.username
 
 class MultipleChoice(models.Model):
     category = models.CharField(max_length=100)
@@ -26,7 +47,7 @@ class QuestionProgress(models.Model):
         ('BS', 'Budget Simulation')
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Cap_Ace_User, on_delete=models.CASCADE)
     question_id = models.IntegerField()
     question_type = models.CharField(max_length=3, choices=QUESTION_TYPES)
 

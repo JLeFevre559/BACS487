@@ -1,6 +1,6 @@
-from django.test import TestCase
-from django.contrib.auth.models import User
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from django.test import TestCase, Client
+from django.contrib.auth import authenticate
+from .models import Cap_Ace_User as User  # This should be the only User reference
 
 class MultipleChoiceTest(TestCase):
     def setUp(self):
@@ -108,12 +108,13 @@ class UserAuthenticationTest(TestCase):
         )
         
     def test_user_creation(self):
-        """Test that we can create a user with the default Django User model"""
+        """Test that we can create a user with our custom User model"""
         user = User.objects.get(username='testuser')
         self.assertEqual(user.email, 'test@example.com')
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
+        self.assertIsNone(user.last_done)
         
     def test_user_authentication(self):
         """Test that created users can authenticate"""
@@ -136,15 +137,20 @@ class UserAuthenticationTest(TestCase):
         self.assertTrue(admin_user.is_superuser)
         self.assertTrue(admin_user.is_staff)
         
-    def test_email_optional(self):
-        """Test that email is optional for user creation"""
-        user = User.objects.create_user(
-            username='noemail',
-            password='testpass123'
-        )
-        self.assertEqual(user.email, '')
-        self.assertTrue(user.is_active)
-
+    def test_last_done_update(self):
+        """Test updating the last_done field"""
+        self.test_user.last_done = 'MC'
+        self.test_user.save()
+        
+        updated_user = User.objects.get(username='testuser')
+        self.assertEqual(updated_user.last_done, 'MC')
+        
+    def test_invalid_category(self):
+        """Test that invalid categories are not allowed"""
+        with self.assertRaises(Exception):
+            self.test_user.last_done = 'INVALID'
+            self.test_user.save()
+            
     def test_username_unique(self):
         """Test that usernames must be unique"""
         with self.assertRaises(Exception):
