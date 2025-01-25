@@ -5,3 +5,12 @@
   --tertiary-color-dark-mode: #ff8c00;
   --quaternary-color-dark-mode: #ff0000;
 }
+
+nav {
+  background-color: var(--bs-blue); 
+  color: white; 
+
+}
+.content {
+  color:  #1911b5;
+}
