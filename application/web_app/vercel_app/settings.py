@@ -53,8 +53,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'cap_ace_web.apps.CapAceWebConfig'
     "cap_ace_web",
+    "crispy_forms",
+    "crispy_bootstrap5"
 ]
 
 MIDDLEWARE = [
@@ -98,23 +99,23 @@ WSGI_APPLICATION = "vercel_app.wsgi.app"
 # Serverless SQL DBs are recommended 
 # Djongo with mongoDB is not recommended, it requires a Django downgrade which causing issues
 # Current setup uses .env file in /application/ for database configuration
-if "test" in sys.argv:
-    DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase"}
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("POSTGRES_DATABASE"),
-            "USER": config("POSTGRES_USER"),
-            "PASSWORD": config("POSTGRES_PASSWORD"),
-            "HOST": config("POSTGRES_HOST"),
-            "OPTIONS": {
-                "sslmode": "require"  # Neon requires SSL connections
-            },
-        }
-    }
+# if "test" in sys.argv:
+DATABASES = {
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "mydatabase"}
+}
+# else:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql",
+#             "NAME": config("POSTGRES_DATABASE"),
+#             "USER": config("POSTGRES_USER"),
+#             "PASSWORD": config("POSTGRES_PASSWORD"),
+#             "HOST": config("POSTGRES_HOST"),
+#             "OPTIONS": {
+#                 "sslmode": "require"  # Neon requires SSL connections
+#             },
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -170,4 +171,12 @@ LOGIN_REDIRECT_URL = (
 )
 
 AUTH_USER_MODEL = 'cap_ace_web.Cap_Ace_User'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'user_list'  # Where to go after login
+LOGOUT_REDIRECT_URL = 'index'     # Where to go after logout
+
 

@@ -1,0 +1,30 @@
+{% extends 'theme.html' %}
+
+{% block title %}User Details{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    User Details
+                    <a href="{% url 'user_edit' user.pk %}" class="btn btn-primary float-end">Edit</a>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Last Category Completed:</strong> 
+                        {% if user.last_done %}
+                            {{ user.get_last_done_display }}
+                        {% else %}
+                            None
+                        {% endif %}
+                    </p>
+                    <p><strong>Date Joined:</strong> {{ user.date_joined|date }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
