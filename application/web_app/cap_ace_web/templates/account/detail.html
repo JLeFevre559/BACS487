@@ -9,8 +9,22 @@
             <div class="card">
                 <div class="card-header">
                     User Details
-                    <a href="{% url 'user_edit' user.pk %}" class="btn btn-primary float-end">Edit</a>
+                    <div class="float-end">
+                        {% if request.user.is_superuser or request.user.pk == user.pk %}
+                            <a href="{% url 'user_edit' user.pk %}" class="btn btn-primary">Edit</a>
+                        {% endif %}
+                        {% if request.user.is_superuser %}
+                            <a href="{% url 'user_delete' user.pk %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                        {% if request.user.pk == user.pk %}
+                            <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary">Logout</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
+                <!-- Rest of the content remains the same -->
                 <div class="card-body">
                     <p><strong>Username:</strong> {{ user.username }}</p>
                     <p><strong>Email:</strong> {{ user.email }}</p>
@@ -22,7 +36,17 @@
                         {% endif %}
                     </p>
                     <p><strong>Date Joined:</strong> {{ user.date_joined|date }}</p>
+                    {% if request.user.is_superuser %}
+                        <p><strong>Active:</strong> {{ user.is_active }}</p>
+                        <p><strong>Staff Status:</strong> {{ user.is_staff }}</p>
+                        <p><strong>Superuser Status:</strong> {{ user.is_superuser }}</p>
+                    {% endif %}
                 </div>
+                {% if request.user.is_superuser %}
+                    <div class="card-footer">
+                        <a href="{% url 'user_list' %}" class="btn btn-secondary">Back to User List</a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
