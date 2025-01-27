@@ -10,7 +10,7 @@ echo "Installing the latest version of pip..."
 python -m pip install --upgrade pip
 
 # Install  pg_config for psycopg
-python setup.py build_ext --pg-config /path/to/pg_config build
+python setup.py build_ext --pg-config /path/to/pg_config build ...
 
 # Build the project
 echo "Building the project..."
