@@ -4,4 +4,30 @@
   --secondary-color-dark-mode: #8c2ffd;
   --tertiary-color-dark-mode: #ff8c00;
   --quaternary-color-dark-mode: #ff0000;
+  --bs-blue: #001885;
+  --bs-light: #ffffff;
+}
+*{
+  max-width: 100%;
+}
+
+nav {
+  background-color: var(--bs-blue); 
+  color: white; 
+
+}
+.content {
+  color:  #1911b5;
+}
+.bg-dark {
+  --bs-bg-opacity: 1;
+  /* this is labeled !important to override bootstrap */
+  background-color: var(--bs-blue) !important;
+}
+.card {
+  background-color: var(--bs-blue);
+  color:var(--bs-light);
+}
+.table, th, td {
+  color:var(--bs-light)
 }
