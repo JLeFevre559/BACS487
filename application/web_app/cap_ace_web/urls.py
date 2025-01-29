@@ -1,14 +1,12 @@
 # example/urls.py
 from django.urls import path, include
-from .views import (
-    Index,
-    UserListView, UserCreateView, UserDetailView, UserUpdateView, UserDeleteView,
-)
+from .views import  Index, UserListView, UserCreateView, UserDetailView, UserUpdateView, UserDeleteView, HomeView
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 
 urlpatterns = [
-    path("", Index.as_view(), name="index"),
+    #path("", Index.as_view(), name="index"),
+    path("", HomeView.as_view(), name="home"),
     path('users/', UserListView.as_view(), name='user_list'),
     path('users/create/', UserCreateView.as_view(), name='user_create'),
     path('users/<int:pk>/', UserDetailView.as_view(), name='user_detail'),
