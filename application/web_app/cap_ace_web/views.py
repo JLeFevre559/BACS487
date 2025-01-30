@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 import yfinance as yf
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm, StockTickerForm
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 
 
@@ -22,14 +22,21 @@ class Index(TemplateView):
 class HomeView(TemplateView):
     template_name = 'theme.html'
     def get_context_data(self, **kwargs):
-        # Call the parent method to get any existing context
         context = super().get_context_data(**kwargs)
-
-        # List of stock symbols you want to track
-        stock_symbols = ['AAPL', 'GOOG', 'TSLA']
 
         # Dictionary to store stock data
         stocks = {}
+        # Initialize the form and get any user input from the GET request
+        form = StockTickerForm(self.request.GET)
+        context['form'] = form
+
+        # Default stock symbols if no input is provided
+        stock_symbols = ['AAPL', 'GOOG', 'TSLA']
+
+        if form.is_valid():
+            # If the form is valid, get tickers from the form input
+            tickers_input = form.cleaned_data['tickers']
+            stock_symbols = [ticker.strip().upper() for ticker in tickers_input.split(',')]
         
         for symbol in stock_symbols:
             try:

@@ -6,6 +6,13 @@
             <h1>Kashoo!</h1>
             <p>Your Personal Financial Learning Journey Starts Here</p>
     </div>
+    <div class="card-body">
+        <h3>Enter Stock Tickers</h3>
+        <form method="get">
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Fetch Stock Data</button>
+        </form>
+    </div>
 
         <div class="card-body">
             <h3>Stocks</h3>

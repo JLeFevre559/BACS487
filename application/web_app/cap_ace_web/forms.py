@@ -46,3 +46,11 @@ class CustomUserChangeForm(UserChangeForm):
             ),
             Submit('submit', 'Update Account', css_class='btn btn-primary')
         )
+
+#Stock Data Form
+class StockTickerForm(forms.Form):
+    tickers = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter tickers (comma separated)', 'class': 'form-control'})
+    )
