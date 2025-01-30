@@ -9,6 +9,18 @@
 
         <div class="card-body">
             <h3>Stocks</h3>
+            {% for symbol, data in stocks.items %}
+            <li>
+                <strong>{{ symbol }}</strong>: 
+                {% if data == 'No data available' %}
+                    {{ data }}
+                {% else %}
+                    Price: Price: ${{ data.close }}
+                    Date: {{ data.date }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
           </div>
 
         <div class="card-body">

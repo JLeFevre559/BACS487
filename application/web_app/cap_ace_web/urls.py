@@ -3,6 +3,7 @@ from django.urls import path, include
 from .views import  Index, UserListView, UserCreateView, UserDetailView, UserUpdateView, UserDeleteView, HomeView
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
+from .import views
 
 urlpatterns = [
     #path("", Index.as_view(), name="index"),
@@ -14,4 +15,5 @@ urlpatterns = [
     path('users/<int:pk>/delete/', UserDeleteView.as_view(), name='user_delete'),
     path('admin/', admin.site.urls),
     path('users/', include('django.contrib.auth.urls')),
+
 ]

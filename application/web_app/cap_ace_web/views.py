@@ -2,10 +2,14 @@ from django.views.generic import TemplateView
 from .models import MultipleChoice, MultipleChoiceDistractor
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
+import yfinance as yf
+from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
 
+
+# Financial Data Feed Dashbaord View
 
 
 
@@ -14,8 +18,41 @@ User = get_user_model()
 class Index(TemplateView):
     template_name = "index.html"
 
+
 class HomeView(TemplateView):
     template_name = 'theme.html'
+    def get_context_data(self, **kwargs):
+        # Call the parent method to get any existing context
+        context = super().get_context_data(**kwargs)
+
+        # List of stock symbols you want to track
+        stock_symbols = ['AAPL', 'GOOG', 'TSLA']
+
+        # Dictionary to store stock data
+        stocks = {}
+        
+        for symbol in stock_symbols:
+            try:
+                # Fetch stock data using yfinance
+                stock = yf.Ticker(symbol)
+                stock_info = stock.history(period='1d')  # Latest data for the day
+
+                # Check if the stock_info is not empty
+                if not stock_info.empty:
+                    latest_data = stock_info.iloc[-1]  # Get the latest row of data
+                    stocks[symbol] = {
+                        'close': latest_data['Close'],
+                        'date': latest_data.name.strftime('%Y-%m-%d'),  # Convert datetime to string
+                    }
+                else:
+                    stocks[symbol] = {'close': 'No data available', 'date': 'N/A'}
+            except Exception as e:
+                stocks[symbol] = {'close': f'Error fetching data: {e}', 'date': 'N/A'}
+
+        # Add the stock data to the context
+        context['stocks'] = stocks
+        
+        return context
 
 class UserCreateView(CreateView):
     model = User
