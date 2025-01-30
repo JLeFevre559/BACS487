@@ -17,7 +17,8 @@ User = get_user_model()
 
 class Index(TemplateView):
     template_name = "index.html"
-
+class learningview(TemplateView):
+    template_name = "customizelearning.html"
 
 class HomeView(TemplateView):
     template_name = 'theme.html'
