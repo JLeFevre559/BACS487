@@ -53,11 +53,3 @@ nav {
   width: 100%;
   bottom: 0;
 }
-input[type="text"], .form-control {
-  width: 100%;
-  padding: 8px;
-  margin: 5px 0;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
