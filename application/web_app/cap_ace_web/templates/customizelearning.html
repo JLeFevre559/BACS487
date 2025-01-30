@@ -3,114 +3,103 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customize Your Learning</title>
+  <title>Kashoo - Personal Financial Learning</title>
+  <link rel="stylesheet" href="theme.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
       margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .header {
+      background-color: #0056b3;  
+      color: white;
+      text-align: center;
       padding: 20px;
     }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff;
+    .main-content {
+      text-align: center;
+      margin: 40px;
+    }
+
+    .button {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 30px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 18px;
+    }
+
+    .button:hover {
+      background-color: #0056b3;
+    }
+
+    .card {
+      display: inline-block;
+      width: 25%;
+      background-color: #007bff;
+      color: white;
+      margin: 15px;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    h1 {
+    .card h3 {
+      font-size: 22px;
+    }
+
+    .footer {
       text-align: center;
-      color: #333;
-    }
-
-    .learning-type {
-      margin: 10px 0;
-    }
-
-    button {
-      background-color: #007BFF; /* Blue color */
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 5px;
-      width: 100%;
-      font-size: 16px;
-    }
-
-    button:hover {
-      background-color: #0056b3; 
-    }
-
-    .selected-learnings {
-      margin-top: 20px;
       padding: 10px;
-      background-color: #e7f7e7;
-      border-radius: 5px;
-      display: none;
+      background-color: #222;
+      color: white;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+
+    .stock-price, .crypto-price {
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-
-  <div class="container">
-    <h1>Customize Your Learning</h1>
-    <form id="learningForm">
-      <div class="learning-type">
-        <input type="checkbox" id="savings" name="learningType" value="Savings">
-        <label for="savings">Savings</label>
-      </div>
-      <div class="learning-type">
-        <input type="checkbox" id="investing" name="learningType" value="Investing">
-        <label for="investing">Investing</label>
-      </div>
-      <div class="learning-type">
-        <input type="checkbox" id="budgeting" name="learningType" value="Budgeting">
-        <label for="budgeting">Budgeting</label>
-      </div>
-      <div class="learning-type">
-        <input type="checkbox" id="credit" name="learningType" value="Credit">
-        <label for="credit">Credit</label>
-      </div>
-      <div class="learning-type">
-        <input type="checkbox" id="taxes" name="learningType" value="Taxes">
-        <label for="taxes">Taxes</label>
-      </div>
-      <div class="learning-type">
-        <input type="checkbox" id="balanceSheet" name="learningType" value="Balance Sheet">
-        <label for="balanceSheet">Balance Sheet</label>
-      </div>
-      <button type="submit">Submit</button>
-    </form>
-
-    <div class="selected-learnings">
-      <h3>You selected:</h3>
-      <p id="selectedList"></p>
-    </div>
+  
+  <div class="header">
+    <h1>Kashoo</h1>
+    <p>Learning Platform</p>
   </div>
 
-  <script>
-    document.getElementById('learningForm').addEventListener('submit', function(event) {
-      event.preventDefault();
 
-      const selectedTypes = Array.from(document.querySelectorAll('input[name="learningType"]:checked'))
-        .map(input => input.value);
-
-      const selectedList = document.getElementById('selectedList');
-      const selectedLearningsDiv = document.querySelector('.selected-learnings');
-
-      if (selectedTypes.length > 0) {
-        selectedList.textContent = selectedTypes.join(', ');
-        selectedLearningsDiv.style.display = 'block'; 
-      } else {
-        selectedList.textContent = 'No learning types selected.';
-        selectedLearningsDiv.style.display = 'block'; 
-      }
-    });
-  </script>
-
-</body>
-</html>
+<div class="main-content">
+  <h2>Get Started</h2>
+  <div class="card">
+    <h3>Investing</h3>
+    <p class="stock-price" id="stock-price">Loading...</p>
+  </div>
+  <div class="card">
+    <h3>Budgeting</h3>
+    <p class="crypto-price" id="crypto-price">Loading...</p>
+  </div>
+  <div class="card">
+    <h3>Balance Sheet</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Continue</a></p>
+  </div>
+  <div class="card">
+    <h3>Savings</h3>
+    <p class="stock-price" id="stock-price">Loading...</p>
+  </div>
+  <div class="card">
+    <h3>Credit</h3>
+    <p class="stock-price" id="stock-price">Loading...</p>
+  </div>
+  <div class="card">
+    <h3>Taxes</h3>
+    <p class="stock-price" id="stock-price">Loading...</p>
+  </div>

@@ -72,13 +72,41 @@
 <body>
   
   <div class="header">
-    <h1>Welcome to Kashoo!</h1>
-    <p>Your Personal Financial Learning Journey Starts Here</p>
+    <h1>Welcome to Kashoo</h1>
+    <p>Financial News and Learning Platform</p>
   </div>
 
-  
+  <div class="navigation">
+    <button id="homeButton">Dashboard</button>
+    <button id="LearningButton">Learning</button>
+</div>
+
+<script>
+    // Navigate to the dashboard when the Home button is clicked
+    document.getElementById('homeButton').addEventListener('click', function () {
+      window.location.href = 'home_dashboard.html'; 
+    });
+
+    // Navigate to the Customize learning page when the Learning button is clicked
+    document.getElementById('LearningButton').addEventListener('click', function () {
+      window.location.href = 'customizelearning.html'; 
+    });
+</script>
+
+<style>
+    .navigation {
+        display: flex;
+        gap: 10px; 
+    }
+
+    .navigation button {
+        padding: 10px 20px; 
+        cursor: pointer;
+    }
+</style>
+
   <div class="main-content">
-    <h2>Get Started with Financial Learning</h2>
+    <h2>Get Started</h2>
     <div class="card">
       <h3>Stocks</h3>
       <p class="stock-price" id="stock-price">Loading...</p>
@@ -91,10 +119,8 @@
       <h3>News</h3>
       <p><a href="https://www.cnbc.com" target="_blank" class="button">Check Latest News</a></p>
     </div>
-    <div class="card">
-      <h3>Learning</h3>
-      <p><a href="customizelearning.html" class="button">Customize My Learning</a></p>
-    </div>
+    
+    
   </div>
 
   
@@ -142,6 +168,8 @@
       fetchStockPrice();
       fetchCryptoPrice();
     };
+    
+
   </script>
 </body>
 </html>
