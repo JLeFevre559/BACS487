@@ -1,45 +1,60 @@
-<link rel="stylesheet" href="static/css/StyleSheet.css"> 
-<div class="card">
 
-    <div class="card-header content">
-      
-            <h1>Kashoo!</h1>
-            <p>Your Personal Financial Learning Journey Starts Here</p>
-    </div>
-    <div class="card-body">
-        <h3>Enter Stock Tickers</h3>
-        <form method="get">
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Fetch Stock Data</button>
-        </form>
-    </div>
+{% extends "theme.html" %}
 
-        <div class="card-body">
-            <h3>Stocks</h3>
-            {% for symbol, data in stocks.items %}
-            <li>
-                <strong>{{ symbol }}</strong>: 
-                {% if data == 'No data available' %}
-                    {{ data }}
-                {% else %}
-                    Price: Price: ${{ data.close }}
-                    Date: {{ data.date }}
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-          </div>
+{% block title %}Home Dashboard - Kashoo{% endblock %}
 
-        <div class="card-body">
-            <h3>Newfeed</h3>
-        </div>
+{% block content %}
 
-        <div class="card-body">
-            <h3>Current Events</h3>
-        </div>
-
-        <!-- <script src="https://cdn.jsdelivr.net/npm/yfinance"></script> -->
-    
-
+<!-- Centered Title and Subtitle -->
+<div class="title-container text-center">
+  <h1>Kashoo</h1>
+  <p>Your Financial News and Learning Hub</p>
 </div>
-<!-- Need to add data feeds and format more-->
+<div class="container">
+    <h3>Stock Ticker</h3>
+    <ul class="list-group">
+      {% for symbol, data in stocks.items %}
+        <li class="list-group-item">
+          <strong>{{ symbol }}</strong>: 
+          {% if data == 'No data available' %}
+            {{ data }}
+          {% else %}
+            Price: ${{ data.close }} | Date: {{ data.date }}
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="list-group-item">Search</li>
+      {% endfor %}
+    </ul>
+
+<!-- space   -->
+<br>
+
+
+  </div>
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+  <div class="card card-news">
+    <h3>News</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Latest News</a></p>
+  </div>
+
+  <div class="card card-crypto">
+    <h3>Crypto</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+  </div>
+
+  <div class="card card-gainers">
+    <h3>Stocks Biggest Gainers</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+  </div>
+
+  <div class="card card-losers">
+    <h3>Stocks Biggest Losers</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+  </div>
+
+  
+</div>
+
+{% endblock %}
