@@ -1,105 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kashoo - Personal Financial Learning</title>
-  <link rel="stylesheet" href="theme.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
+{% extends "theme.html" %}
 
-    .header {
-      background-color: #0056b3;  
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+{% block title %}Customize Learning - Kashoo{% endblock %}
 
-    .main-content {
-      text-align: center;
-      margin: 40px;
-    }
-
-    .button {
-      background-color: #007bff;
-      color: white;
-      padding: 15px 30px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 18px;
-    }
-
-    .button:hover {
-      background-color: #0056b3;
-    }
-
-    .card {
-      display: inline-block;
-      width: 25%;
-      background-color: #007bff;
-      color: white;
-      margin: 15px;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .card h3 {
-      font-size: 22px;
-    }
-
-    .footer {
-      text-align: center;
-      padding: 10px;
-      background-color: #222;
-      color: white;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-
-    .stock-price, .crypto-price {
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  
-  <div class="header">
-    <h1>Kashoo</h1>
-    <p>Learning Platform</p>
+{% block content %}
+  <div class="main-content">
+    <h2>Get Started</h2>
+    <!-- a card that has a button that will take you to learning category -->
+     <!-- Placeholder link under each category  -->
+    <div class="card">   
+      <h3>Investing</h3>
+      <p><a href="https://www.cnbc.com" target="_blank" class="button">Go</a></p>
+    </div>
+    <div class="card">
+      <h3>Budgeting</h3>
+      <p><a href="https://www.cnbc.com" target="_blank" class="button">Go</a></p>
+    </div>
+    <div class="card">
+      <h3>Balance Sheet</h3>
+      <p><a href="https://www.cnbc.com" target="_blank" class="button">Go</a></p>
+    </div>
+    <div class="card">
+      <h3>Savings</h3>
+      <p><a href="https://www.cnbc.com" target="_blank" class="button">Go</a></p>
+    </div>
+    <div class="card">
+      <h3>Credit</h3>
+      <p><a href="https://www.cnbc.com" target="_blank" class="button">Go</a></p>
+    </div>
+    <div class="card">
+      <h3>Taxes</h3>
+      <p><a href="https://www.cnbc.com" target="_blank" class="button">Go</a></p>
+    </div>
   </div>
-
-
-<div class="main-content">
-  <h2>Get Started</h2>
-  <div class="card">
-    <h3>Investing</h3>
-    <p class="stock-price" id="stock-price">Loading...</p>
-  </div>
-  <div class="card">
-    <h3>Budgeting</h3>
-    <p class="crypto-price" id="crypto-price">Loading...</p>
-  </div>
-  <div class="card">
-    <h3>Balance Sheet</h3>
-    <p><a href="https://www.cnbc.com" target="_blank" class="button">Continue</a></p>
-  </div>
-  <div class="card">
-    <h3>Savings</h3>
-    <p class="stock-price" id="stock-price">Loading...</p>
-  </div>
-  <div class="card">
-    <h3>Credit</h3>
-    <p class="stock-price" id="stock-price">Loading...</p>
-  </div>
-  <div class="card">
-    <h3>Taxes</h3>
-    <p class="stock-price" id="stock-price">Loading...</p>
-  </div>
+{% endblock %}

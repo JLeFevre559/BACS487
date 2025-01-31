@@ -16,7 +16,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView,
 User = get_user_model()
 
 class Index(TemplateView):
-    template_name = "index.html"
+    template_name = "home_dashboard.html"
 class learningview(TemplateView):
     template_name = "customizelearning.html"
 
