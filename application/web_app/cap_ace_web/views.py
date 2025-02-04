@@ -118,9 +118,10 @@ class HomeView(TemplateView):
         for symbol in stock_symbols:
             try:
                 # Fetch stock data using yfinance
-                stock = yf.Ticker(symbol)
-                stock_info = stock.history(period='1d')  # Latest data for the day
-
+                # stock = yf.Ticker(symbol)
+                # stock_info = stock.history(period='1d')  # Latest data for the day
+                stock_info = []
+                
                 # Check if the stock_info is not empty
                 if not stock_info.empty:
                     latest_data = stock_info.iloc[-1]  # Get the latest row of data

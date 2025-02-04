@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth import authenticate, get_user_model
 from django.apps import apps
 from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from django.db import models
 
 class MultipleChoiceTest(TestCase):
     @classmethod
