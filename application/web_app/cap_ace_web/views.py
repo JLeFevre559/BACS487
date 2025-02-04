@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .models import MultipleChoice, MultipleChoiceDistractor
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 import yfinance as yf
@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import CustomUserCreationForm, CustomUserChangeForm, StockTickerForm
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, ListView
+from django.db.models import Count
 
 
 # Financial Data Feed Dashbaord View
@@ -17,8 +18,83 @@ User = get_user_model()
 
 class Index(TemplateView):
     template_name = "home_dashboard.html"
-class learningview(TemplateView):
-    template_name = "customizelearning.html"
+
+class learningview(LoginRequiredMixin, TemplateView):
+    template_name = 'customizelearning.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get all available questions per category
+        total_questions = {
+            category[0]: MultipleChoice.objects.filter(category=category[0]).count()
+            for category in QuestionProgress.CATEGORIES
+        }
+        
+        # Get completed questions for the user by category
+        completed_questions = (
+            QuestionProgress.objects
+            .filter(user=self.request.user)
+            .values('category')
+            .annotate(completed=Count('question_id'))
+        )
+        
+        # Calculate progress for each category
+        categories = {}
+        XP_PER_QUESTION = 10
+        XP_PER_LEVEL = 20
+        MAX_LEVEL = 30
+        
+        for category_code, category_name in QuestionProgress.CATEGORIES:
+            # Get number of completed questions for this category
+            completed = next(
+                (item['completed'] for item in completed_questions 
+                 if item['category'] == category_code),
+                0
+            )
+            
+            total = total_questions.get(category_code, 0)
+            
+            # Calculate XP and level
+            xp = completed * XP_PER_QUESTION
+            level = min(xp // XP_PER_LEVEL, MAX_LEVEL)
+            progress_to_next = (xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100 if level < MAX_LEVEL else 100
+            
+            # Get completion percentage
+            completion_percentage = (completed / total * 100) if total > 0 else 0
+            
+            # Create URL based on category code
+            url_mapping = {
+                'BUD': '/budget/',
+                'INV': '/investing/',
+                'SAV': '/savings/',
+                'BAL': '/balance/',
+                'CRD': '/credit/',
+                'TAX': '/taxes/'
+            }
+            
+            categories[category_code] = {
+                'title': category_name,
+                'url': '/learn' + url_mapping.get(category_code, '/'),
+                'total_questions': total,
+                'completed_questions': completed,
+                'completion_percentage': round(completion_percentage, 1),
+                'xp': xp,
+                'level': level,
+                'progress': round(progress_to_next, 1),
+                'icon': f'{category_name.lower()}-icon'  # CSS class for the icon
+            }
+        
+        # Calculate totals
+        total_xp = sum(cat['xp'] for cat in categories.values())
+        total_completed = sum(cat['completed_questions'] for cat in categories.values())
+        
+        context.update({
+            'categories': categories,
+            'total_xp': total_xp,
+            'total_completed': total_completed
+        })
+        return context
 
 class HomeView(TemplateView):
     template_name = 'theme.html'

@@ -176,3 +176,103 @@ class UserAuthenticationTest(TestCase):
         self.test_user.save()
         user = authenticate(username='testuser', password='testpass123')
         self.assertIsNone(user)
+
+class QuestionProgressTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Get the user model
+        User = get_user_model()
+        
+        # Create the test user
+        cls.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        
+        # Create a test multiple choice question
+        cls.mc_question = MultipleChoice.objects.create(
+            category="Budgeting",
+            question="What is a budget?",
+            answer="A financial plan for spending and saving",
+            feedback="Budgeting is essential for financial planning"
+        )
+
+    def test_progress_creation(self):
+        """Test creating a progress record with category"""
+        progress = QuestionProgress.objects.create(
+            user=self.user,
+            question_id=self.mc_question.id,
+            question_type='MC',
+            category='BUD'
+        )
+        
+        self.assertEqual(progress.category, 'BUD')
+        self.assertEqual(progress.get_category_display(), 'Budgeting')
+        
+    def test_invalid_category(self):
+        """Test that invalid categories are not allowed"""
+        with self.assertRaises(Exception):
+            QuestionProgress.objects.create(
+                user=self.user,
+                question_id=self.mc_question.id,
+                question_type='MC',
+                category='INVALID'
+            )
+            
+    def test_unique_progress_constraint(self):
+        """Test that duplicate progress entries are not allowed"""
+        # Create initial progress
+        QuestionProgress.objects.create(
+            user=self.user,
+            question_id=self.mc_question.id,
+            question_type='MC',
+            category='BUD'
+        )
+        
+        # Attempt to create duplicate progress
+        with self.assertRaises(Exception):
+            QuestionProgress.objects.create(
+                user=self.user,
+                question_id=self.mc_question.id,
+                question_type='MC',
+                category='BUD'
+            )
+            
+    def test_progress_str_method(self):
+        """Test the string representation of the progress"""
+        progress = QuestionProgress.objects.create(
+            user=self.user,
+            question_id=self.mc_question.id,
+            question_type='MC',
+            category='BUD'
+        )
+        expected_str = f"testuser - Budgeting - Multiple Choice {self.mc_question.id}"
+        self.assertEqual(str(progress), expected_str)
+        
+    def test_category_specific_progress(self):
+        """Test retrieving progress for specific categories"""
+        # Create progress records for different categories
+        QuestionProgress.objects.create(
+            user=self.user,
+            question_id=1,
+            question_type='MC',
+            category='BUD'
+        )
+        QuestionProgress.objects.create(
+            user=self.user,
+            question_id=2,
+            question_type='MC',
+            category='SAV'
+        )
+        
+        budgeting_progress = QuestionProgress.objects.filter(
+            user=self.user,
+            category='BUD'
+        ).count()
+        savings_progress = QuestionProgress.objects.filter(
+            user=self.user,
+            category='SAV'
+        ).count()
+        
+        self.assertEqual(budgeting_progress, 1)
+        self.assertEqual(savings_progress, 1)

@@ -46,13 +46,24 @@ class QuestionProgress(models.Model):
         ('FC', 'Flash Card'),
         ('BS', 'Budget Simulation')
     ]
+    
+    CATEGORIES = [
+        ('BUD', 'Budgeting'),
+        ('INV', 'Investing'),
+        ('SAV', 'Savings'),
+        ('BAL', 'Balance Sheet'),
+        ('CRD', 'Credit'),
+        ('TAX', 'Taxes')
+    ]
 
     user = models.ForeignKey(Cap_Ace_User, on_delete=models.CASCADE)
     question_id = models.IntegerField()
     question_type = models.CharField(max_length=3, choices=QUESTION_TYPES)
+    category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
+    completed_at = models.DateTimeField(auto_now_add=True, null=True)
 
     class Meta:
         unique_together = ['user', 'question_id', 'question_type']
         
     def __str__(self):
-        return f"{self.user.username} - {self.question_type} {self.question_id}"
+        return f"{self.user.username} - {self.get_category_display()} - {self.get_question_type_display()} {self.question_id}"
