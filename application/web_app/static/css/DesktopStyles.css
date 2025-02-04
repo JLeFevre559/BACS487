@@ -1,0 +1,17 @@
+@media screen and (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  
+  /* Hide desktop elements by default (mobile-first approach) */
+  .desktop-only {
+    display: none;
+  }
+  
+  /* Show mobile elements by default */
+  .mobile-only {
+    display: block;
+  }
+
+  /* Additional styles for desktop */
+  .bg-dark {
+    background-color: var(--bs-blue);
+  }
+}

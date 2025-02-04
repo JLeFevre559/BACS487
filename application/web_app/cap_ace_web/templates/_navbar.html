@@ -1,15 +1,25 @@
 {% load static %}
-<nav class="navbar-box">
-    <div class="navbar">
-        <div class="navbar-div">
-            <a href="/" class="navbar-button">Navbar Button 1</a>
-        </div>
-            <div class="navbar-div">
-            <a href="/" class="navbar-link"><img src="{% static '/images/template-icon.png' %}" alt="Template Icon"  class="navbar-photo"></a>
-        </div>
-        <div class="navbar-div">
-            <a href="/" class="navbar-button">Navbar Button 2</a>
-            <a href="/" class="navbar-button">Navbar Button 3</a>
-        </div>
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary text-light">
+   
+    <!-- Takes you to HomePage -->
+    <a class="navbar-brand text-light" href="{% url 'home' %}">HomePage</a>
+
+    <!-- takes you to Learn Page -->
+    <a class="navbar-brand text-light" href="{% url 'learn' %}">Learn</a>
+
+    <!-- Progress Page (Placeholder for Now) -->
+    <a class="navbar-brand text-light" href="#">Your Progress</a>
+
+    <div class="ml-auto">
+        {% if user.is_authenticated %}
+            <a class="navbar-brand text-light navbar-button" href="{% url 'user_detail' user.pk %}">{{ user.username }}</a>
+            {% if user.is_superuser %}
+                <a class="navbar-brand text-light navbar-button" href="{% url 'user_list' %}">User List</a>
+            {% endif %}
+        {% else %}
+            <a class="navbar-brand text-light navbar-button" href="{% url 'login' %}">Login</a>
+        {% endif %}
     </div>
 </nav>
+
+ 

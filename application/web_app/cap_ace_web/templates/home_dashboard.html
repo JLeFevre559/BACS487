@@ -1,0 +1,60 @@
+
+{% extends "theme.html" %}
+
+{% block title %}Home Dashboard - Kashoo{% endblock %}
+
+{% block content %}
+
+<!-- Centered Title and Subtitle -->
+<div class="title-container text-center">
+  <h1>Kashoo</h1>
+  <p>Your Financial News and Learning Hub</p>
+</div>
+<div class="container">
+    <h3>Stock Ticker</h3>
+    <ul class="list-group">
+      {% for symbol, data in stocks.items %}
+        <li class="list-group-item">
+          <strong>{{ symbol }}</strong>: 
+          {% if data == 'No data available' %}
+            {{ data }}
+          {% else %}
+            Price: ${{ data.close }} | Date: {{ data.date }}
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="list-group-item">Search</li>
+      {% endfor %}
+    </ul>
+
+<!-- space   -->
+<br>
+
+
+  </div>
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+  <div class="card card-news">
+    <h3>News</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Latest News</a></p>
+  </div>
+
+  <div class="card card-crypto">
+    <h3>Crypto</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+  </div>
+
+  <div class="card card-gainers">
+    <h3>Stocks Biggest Gainers</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+  </div>
+
+  <div class="card card-losers">
+    <h3>Stocks Biggest Losers</h3>
+    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+  </div>
+
+  
+</div>
+
+{% endblock %}

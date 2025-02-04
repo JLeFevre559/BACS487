@@ -1,0 +1,58 @@
+{% extends "theme.html" %}
+
+{% block title %}Learning Categories - Kashoo{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h2 class="section-title">Select Learning Category</h2>
+    <div class="stats-summary">
+        <p>Total XP Earned: {{ total_xp }}</p>
+        <p>Questions Completed: {{ total_completed }}</p>
+    </div>
+    
+    <div class="dashboard-grid">
+        {% for code, category in categories.items %}
+        <div class="card learning-card">
+            <div class="card-header">
+                <i class="{{ category.icon }}"></i>
+                <h3>{{ category.title }}</h3>
+            </div>
+            
+            <div class="progress-info">
+                <div class="level-stats">
+                    <div class="level-badge">Level {{ category.level }}/30</div>
+                    <div class="xp-counter">{{ category.xp }} XP</div>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-label">
+                        Next Level: {{ category.progress }}%
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" 
+                             style="width: {{ category.progress }}%"
+                             title="Progress to next level"></div>
+                    </div>
+                </div>
+                
+                <div class="completion-stats">
+                    <p>{{ category.completed_questions }} / {{ category.total_questions }} Questions Completed</p>
+                    <p>{{ category.completion_percentage }}% Complete</p>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ category.url }}" class="button primary-button">
+                    {% if category.completed_questions == 0 %}
+                        Start Learning
+                    {% else %}
+                        Continue Learning
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
