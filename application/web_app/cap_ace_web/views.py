@@ -2,7 +2,6 @@ from django.views.generic import TemplateView
 from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
-import yfinance as yf
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .forms import CustomUserCreationForm, CustomUserChangeForm, StockTickerForm
@@ -121,7 +120,7 @@ class HomeView(TemplateView):
                 # stock = yf.Ticker(symbol)
                 # stock_info = stock.history(period='1d')  # Latest data for the day
                 stock_info = []
-                
+
                 # Check if the stock_info is not empty
                 if not stock_info.empty:
                     latest_data = stock_info.iloc[-1]  # Get the latest row of data

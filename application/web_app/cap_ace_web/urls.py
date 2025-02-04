@@ -1,13 +1,6 @@
 # example/urls.py
 from django.urls import path, include
-from .views import  Index
-from .views import HomeView
-from .views import UserListView
-from .views import UserCreateView
-from .views import UserDetailView
-from .views import UserUpdateView
-from .views import UserDeleteView
-from .views import learningview
+from .views import  Index, UserListView, UserCreateView, UserDetailView, UserUpdateView, UserDeleteView, HomeView,learningview
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from .import views
