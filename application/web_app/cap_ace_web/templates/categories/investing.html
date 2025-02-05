@@ -1,0 +1,47 @@
+{% extends "theme.html" %}
+{% block content %}
+
+
+<div class="card-header">
+    <h2 class="section-title">Learn About Investing</h2>
+    <div class="stats-summary">
+        <p>Please Select A Learning Game</p>
+    </div>
+    <div class="dashboard-grid">
+    
+    
+        {% for code, name in learning_games.items %}
+        <div class="card learning-card">
+            <div class="card-header">
+                <i class="{{ category.icon }}"></i>
+                <h3>{{name.title}}</h3>
+            </div>
+            
+            <div class="progress-info">
+                <div class="level-stats">
+                    <div class="level-badge">Number of Attempts</div> <!-- need to potentially change the class to fit with a game specific style or just reuse the learning dashboard style with different data-->
+                    <div class="xp-counter"> XP</div>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-label">
+                        Here is how you're doing
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" 
+                             style="width: {{ category.progress }}%"
+                             title="Progress to next level"></div>
+                    </div>
+                </div>
+               
+            </div>
+                <div class="card-footer">
+                    <a href="{{ name.url }}" class="button primary-button">
+                            Play Game
+                    </a>
+                </div>
+        </div>
+            {% endfor %}
+            
+
+{% endblock %}
