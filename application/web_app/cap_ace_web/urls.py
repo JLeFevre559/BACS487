@@ -4,6 +4,7 @@ from .views import  Index, UserListView, UserCreateView, UserDetailView, UserUpd
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from .import views
+from .category_views import BudgetView, SavingsView, InvestingView, TaxesView, CreditView, BalanceSheetView
 
 urlpatterns = [
     path("", Index.as_view(), name="index"),
@@ -16,5 +17,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('django.contrib.auth.urls')),
     path('learn/', learningview.as_view(), name='learn'),
-
+    
+    
+    # Paths to Learning Category pages where users can navigate to learning games 
+    path('learn/budget/', BudgetView.as_view(), name='learn_budget'),
+    path('learn/savings/', SavingsView.as_view(), name='learn_savings'),
+    path('learn/investing/', InvestingView.as_view(), name='learn_investing'),
+    path('learn/taxes/', TaxesView.as_view(), name='learn_taxes'),
+    path('learn/credit/', CreditView.as_view(), name='learn_credit'),
+    path('learn/balance/', BalanceSheetView.as_view(), name='learn_balance'),
 ]
