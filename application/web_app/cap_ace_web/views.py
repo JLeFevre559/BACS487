@@ -436,7 +436,11 @@ class UserListView(LoginRequiredMixin, SuperUserRequiredMixin, ListView):
     template_name = 'account/list.html'
     context_object_name = 'users'
 
-class UserDeleteView(LoginRequiredMixin, SuperUserRequiredMixin, DeleteView):
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
     template_name = 'account/delete.html'
     success_url = reverse_lazy('user_list')
+
+    def test_func(self):
+        # Allow if superuser or if user is editing their own profile
+        return self.request.user.is_superuser or self.request.user.pk == self.get_object().pk
