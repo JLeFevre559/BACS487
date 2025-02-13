@@ -23,10 +23,26 @@ class Cap_Ace_User(AbstractUser):
         return self.username
 
 class MultipleChoice(models.Model):
-    category = models.CharField(max_length=100)
+    DIFFICULTIES = [
+        ('B', 'Beginner'),
+        ('I', 'Intermediate'),
+        ('A', 'Advanced')
+    ]
+
+    CATEGORIES = [
+        ('BUD', 'Budgeting'),
+        ('INV', 'Investing'),
+        ('SAV', 'Savings'),
+        ('BAL', 'Balance Sheet'),
+        ('CRD', 'Credit'),
+        ('TAX', 'Taxes')
+    ]
+
+    category = models.CharField(max_length=100, choices=CATEGORIES)
     question = models.TextField()
     answer = models.TextField()
     feedback = models.TextField()
+    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
 
     def __str__(self):
         return f"Multiple Choice: {self.question}..."

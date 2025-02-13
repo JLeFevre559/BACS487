@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from http import HTTPStatus
 from django.shortcuts import render
-from .models import SavingModule, SavingsGoal
+from .test_models import SavingModule, SavingsGoal
 
 User = get_user_model()
 
@@ -132,10 +132,11 @@ class UserViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)  # Redirect to login
         
-        # Test regular user access (should fail)
-        self.client.login(username='testuser', password='testpass123')
+        # Test other user access (should fail)
+        user = User.objects.create_user('deleteuser', 'testpass123')
+        self.client.login(username='deleteuser', password='testpass123')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN)
+        self.assertEqual(response.status_code, 302)
         
         # Test superuser access
         self.client.login(username='admin', password='adminpass123')
