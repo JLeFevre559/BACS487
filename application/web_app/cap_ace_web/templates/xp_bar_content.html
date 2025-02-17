@@ -1,0 +1,33 @@
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/XpBarStyles.css' %}">
+{% endblock %}
+<div class="xp-container">
+    <!-- XP Info -->
+    <div class="xp-info">
+        <span>Level {{ current_level }}</span>
+        <span>{{ current_xp }}/140 XP</span>
+    </div>
+    
+    <!-- XP Bar -->
+    <div class="xp-progress">
+        <div class="xp-progress-bar" 
+             role="progressbar" 
+             style="width: {{ xp_progress }}%;" 
+             aria-valuenow="{{ current_xp }}" 
+             aria-valuemin="0" 
+             aria-valuemax="140">
+        </div>
+    </div>
+    
+    <!-- Level Up Info -->
+    {% if current_level < 30 %}
+        <div class="xp-level-info">
+            {{ 140|subtract:current_xp }} XP to Level {{ current_level|add:1 }}
+        </div>
+    {% else %}
+        <div class="xp-level-info max-level">
+            Maximum Level Reached!
+        </div>
+    {% endif %}
+</div>

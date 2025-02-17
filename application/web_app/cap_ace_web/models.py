@@ -19,6 +19,14 @@ class Cap_Ace_User(AbstractUser):
         blank=True
     )
 
+    # Experience points, reduces database calls by storing the total xp in the user model
+    budget_xp = models.IntegerField(default=0)
+    investing_xp = models.IntegerField(default=0)
+    savings_xp = models.IntegerField(default=0)
+    balance_sheet_xp = models.IntegerField(default=0)
+    credit_xp = models.IntegerField(default=0)
+    taxes_xp = models.IntegerField(default=0)
+
     def __str__(self):
         return self.username
 
