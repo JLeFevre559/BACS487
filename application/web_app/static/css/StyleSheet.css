@@ -86,3 +86,12 @@ input[type="text"], .form-control {
   text-align: center;
 }
 
+.content-container {
+  display: flex;  
+  gap: 20px;      
+}
+
+@media (max-width: 768px) {
+  .content-container {
+      flex-direction: column; }
+}
