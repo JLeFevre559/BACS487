@@ -528,3 +528,8 @@ class MultipleChoiceDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteVie
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Multiple choice question deleted successfully.')
         return super().delete(request, *args, **kwargs)
+    
+    from django.shortcuts import render
+
+def home(request):
+    return render(request, "home.html")
