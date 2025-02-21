@@ -85,6 +85,7 @@ input[type="text"], .form-control {
   text-align: center;
 }
 
+<<<<<<< HEAD
 nav {
   background-color: var(--bs-blue); 
   color: white;
@@ -111,3 +112,14 @@ nav {
 
   
 
+=======
+.content-container {
+  display: flex;  
+  gap: 20px;      
+}
+
+@media (max-width: 768px) {
+  .content-container {
+      flex-direction: column; }
+}
+>>>>>>> e7e1c5461ce63167fcc797bcf5785d036f449462
