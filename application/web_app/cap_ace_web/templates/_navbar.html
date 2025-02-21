@@ -1,29 +1,25 @@
 {% load static %}
 <nav class="navbar navbar-expand-sm navbar-dark bg-primary text-light">
-    <!-- Logo image on the left -->
-    <a class="navbar-brand ml-2" href="{% url 'home' %}">
-        <img src="{% static 'images/kashoo logo with name.png' %}" width="100px" alt="Logo">
-    </a>
+   
+    <!-- Takes you to HomePage -->
+    <a class="navbar-brand text-light" href="{% url 'home' %}">HomePage</a>
 
-    <!-- Container for alignment -->
-    <div class="d-flex flex-grow-1 justify-content-end align-items-center">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link text-light" href="{% url 'learn' %}" style="font-size: 1.1rem; margin-right: 20px;">Learn</a>
-            <a class="nav-item nav-link text-light" href="#" style="font-size: 1.1rem; margin-right: 20px;">Your Progress</a>
+    <!-- takes you to Learn Page -->
+    <a class="navbar-brand text-light" href="{% url 'learn' %}">Learn</a>
 
-            {% if user.is_authenticated %}
-                <a class="nav-item nav-link text-light navbar-button" href="{% url 'user_detail' user.pk %}" style="font-size: 1.1rem; margin-right: 20px;">{{ user.username }}</a>
-                {% if user.is_superuser %}
-                    <a class="nav-item nav-link text-light navbar-button" href="{% url 'user_list' %}" style="font-size: 1.1rem; margin-right: 20px;">User List</a>
-                {% endif %}
-            {% else %}
-                <a class="nav-item nav-link text-light navbar-button" href="{% url 'login' %}" style="font-size: 1.1rem; margin-right: 20px;">Login</a>
+    <!-- Progress Page (Placeholder for Now) -->
+    <a class="navbar-brand text-light" href="#">Your Progress</a>
+
+    <div class="ml-auto">
+        {% if user.is_authenticated %}
+            <a class="navbar-brand text-light navbar-button" href="{% url 'user_detail' user.pk %}">{{ user.username }}</a>
+            {% if user.is_superuser %}
+                <a class="navbar-brand text-light navbar-button" href="{% url 'user_list' %}">User List</a>
             {% endif %}
-        </div>
+        {% else %}
+            <a class="navbar-brand text-light navbar-button" href="{% url 'login' %}">Login</a>
+        {% endif %}
     </div>
 </nav>
-
-
-
 
  
