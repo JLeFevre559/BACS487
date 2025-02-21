@@ -7,17 +7,16 @@
   --bs-blue: hsl(224, 83%, 52%);
   --bs-light: #fffafa;
   --bs-card: #000408;
+  --bs-primary-rgb:rgb(1,19,45);
+
+  
   
 }
 *{
   max-width: 100%;
 }
 
-nav {
-  background-color: var(--bs-blue); 
-  color: white; 
 
-}
 .content {
   text-align: center;
   margin: 40px;
@@ -26,7 +25,7 @@ nav {
 .bg-dark {
   --bs-bg-opacity: 1;
   /* this is labeled !important to override bootstrap */
-  background-color: var(--bs-blue) !important;
+  background-color: rgb(1,19,45) !important;
 }
 .card {
   background-color: var(--bs-blue);
@@ -86,3 +85,41 @@ input[type="text"], .form-control {
   text-align: center;
 }
 
+<<<<<<< HEAD
+nav {
+  background-color: var(--bs-blue); 
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+}
+
+.navbar-logo img {
+  height: 50px; 
+  width: auto;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1.1rem;
+  margin-right: 20px;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ADD8E6 !important; /* Light blue */
+}
+
+  
+
+=======
+.content-container {
+  display: flex;  
+  gap: 20px;      
+}
+
+@media (max-width: 768px) {
+  .content-container {
+      flex-direction: column; }
+}
+>>>>>>> e7e1c5461ce63167fcc797bcf5785d036f449462
