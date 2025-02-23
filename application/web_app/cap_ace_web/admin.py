@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .models import MultipleChoice, MultipleChoiceDistractor
 
 User = get_user_model()
 
@@ -23,4 +24,25 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ['username', 'email']
     ordering = ['username']
 
+class MultipleChoiceDistractorInline(admin.TabularInline):
+    model = MultipleChoiceDistractor
+    extra = 3
+    min_num = 2
+    max_num = 4
+
+class MultipleChoiceAdmin(admin.ModelAdmin):
+    list_display = ('question', 'category', 'difficulty')
+    list_filter = ('category', 'difficulty')
+    search_fields = ('question', 'answer', 'feedback')
+    inlines = [MultipleChoiceDistractorInline]
+    fieldsets = (
+        (None, {
+            'fields': ('category', 'difficulty')
+        }),
+        ('Question Details', {
+            'fields': ('question', 'answer', 'feedback')
+        }),
+    )
+
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(MultipleChoice, MultipleChoiceAdmin)
