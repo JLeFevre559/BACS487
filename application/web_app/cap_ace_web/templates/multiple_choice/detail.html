@@ -1,0 +1,49 @@
+{% extends 'theme.html' %}
+
+{% block title %}Question Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Question Details</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Category:</dt>
+                        <dd class="col-sm-9">{{ question.get_category_display }}</dd>
+
+                        <dt class="col-sm-3">Question:</dt>
+                        <dd class="col-sm-9">{{ question.question }}</dd>
+
+                        <dt class="col-sm-3">Answer:</dt>
+                        <dd class="col-sm-9">{{ question.answer }}</dd>
+
+                        <dt class="col-sm-3">Feedback:</dt>
+                        <dd class="col-sm-9">{{ question.feedback }}</dd>
+
+                        <dt class="col-sm-3">Difficulty:</dt>
+                        <dd class="col-sm-9">{{ question.get_difficulty_display }}</dd>
+
+                        <dt class="col-sm-3">Distractors:</dt>
+                        <dd class="col-sm-9">
+                            <ul class="list-unstyled">
+                                {% for distractor in question.distractors.all %}
+                                    <li>{{ distractor.distractor }}</li>
+                                {% endfor %}
+                            </ul>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'multiple_choice_edit' question.pk %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'multiple_choice_delete' question.pk %}" class="btn btn-danger">Delete</a>
+                    <a href="{% url 'multiple_choice_list' %}" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

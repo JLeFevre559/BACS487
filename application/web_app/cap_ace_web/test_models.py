@@ -213,12 +213,14 @@ class QuestionProgressTest(TestCase):
     def test_invalid_category(self):
         """Test that invalid categories are not allowed"""
         with self.assertRaises(Exception):
-            QuestionProgress.objects.create(
+            qp = QuestionProgress.objects.create(
                 user=self.user,
                 question_id=self.mc_question.id,
                 question_type='MC',
                 category='INVALID'
             )
+            qp.full_clean()
+
             
     def test_unique_progress_constraint(self):
         """Test that duplicate progress entries are not allowed"""
@@ -277,13 +279,15 @@ class QuestionProgressTest(TestCase):
         
         self.assertEqual(budgeting_progress, 1)
         self.assertEqual(savings_progress, 1)
+
+User = get_user_model()
 class SavingModule(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
 class SavingsGoal(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     current_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     goal_date = models.DateField()
@@ -291,7 +295,7 @@ class BudgetCategory(models.Model):
     name = models.CharField(max_length=100)
 
 class Expense(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(BudgetCategory, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)

@@ -1,6 +1,7 @@
 # example/urls.py
 from django.urls import path, include
-from .views import  Index, UserListView, UserCreateView, UserDetailView, UserUpdateView, UserDeleteView, HomeView,learningview
+from .views import  (Index, UserListView, UserCreateView, UserDetailView, UserUpdateView, UserDeleteView, HomeView,learningview,
+                    MultipleChoiceListView, MultipleChoiceDetailView, MultipleChoiceCreateView, MultipleChoiceUpdateView, MultipleChoiceDeleteView)
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from .import views
@@ -26,4 +27,11 @@ urlpatterns = [
     path('learn/taxes/', TaxesView.as_view(), name='learn_taxes'),
     path('learn/credit/', CreditView.as_view(), name='learn_credit'),
     path('learn/balance/', BalanceSheetView.as_view(), name='learn_balance'),
+
+    # Paths to multiple choice games
+    path('multiple-choice/', MultipleChoiceListView.as_view(), name='multiple_choice_list'),
+    path('multiple-choice/<int:pk>/', MultipleChoiceDetailView.as_view(), name='multiple_choice_detail'),
+    path('multiple-choice/create/', MultipleChoiceCreateView.as_view(), name='multiple_choice_create'),
+    path('multiple-choice/<int:pk>/edit/', MultipleChoiceUpdateView.as_view(), name='multiple_choice_edit'),
+    path('multiple-choice/<int:pk>/delete/', MultipleChoiceDeleteView.as_view(), name='multiple_choice_delete'),
 ]

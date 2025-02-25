@@ -1,0 +1,13 @@
+{% load xp_tags %}
+
+{% if user.is_authenticated %}
+    <h1 class="text-primary">XP Progress</h1>
+    {% get_xp_data user request.path as xp_data %}
+    {% if xp_data %}
+        {% include "xp_bar_content.html" with current_level=xp_data.current_level current_xp=xp_data.current_xp xp_progress=xp_data.xp_progress %}
+    {% endif %}
+{% else %}
+    <div class="xp-container">
+        <p class="text-center">Please log in to track your progress</p>
+    </div>
+{% endif %}

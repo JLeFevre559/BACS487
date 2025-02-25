@@ -1,23 +1,27 @@
 {% extends 'theme.html' %}
 
-{% block title %}Delete Account{% endblock title %}
+{% block title %}Delete Question{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Delete Account</div>
+                <div class="card-header">
+                    <h5 class="mb-0">Delete Question</h5>
+                </div>
                 <div class="card-body">
+                    <p>Are you sure you want to delete this question?</p>
+                    <p><strong>Question:</strong> {{ question.question }}</p>
+                    
                     <form method="post">
                         {% csrf_token %}
-                        <p>Are you sure you want to delete "{{ object.username }}"?</p>
                         <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+                        <a href="{% url 'multiple_choice_list' %}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock %}

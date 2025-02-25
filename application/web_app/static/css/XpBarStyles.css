@@ -1,0 +1,41 @@
+/* xp_bar.css */
+.xp-container {
+    margin: 20px auto;
+    width: 66%;
+}
+
+.xp-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.xp-progress {
+    height: 25px;
+    background-color: var(--bs-gray-100);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.xp-progress-bar {
+    height: 100%;
+    background-color: var(--bs-blue);  /* Bootstrap primary blue */
+    transition: width 0.3s ease;
+}
+
+.xp-level-info {
+    text-align: right;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.xp-level-info.max-level {
+    color: #198754;  /* Bootstrap success green */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .xp-container {
+        width: 90%;
+    }
+}

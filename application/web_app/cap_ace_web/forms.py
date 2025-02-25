@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
 
 User = get_user_model()
 
@@ -54,3 +55,35 @@ class StockTickerForm(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={'placeholder': 'Enter tickers (comma separated)', 'class': 'form-control'})
     )
+
+class MultipleChoiceForm(forms.ModelForm):
+    class Meta:
+        model = MultipleChoice
+        fields = ['category', 'question', 'answer', 'feedback', 'difficulty']
+        widgets = {
+            'feedback': forms.Textarea(attrs={'rows': 3}),
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure the category choices are properly set
+        self.fields['category'].choices = MultipleChoice.CATEGORIES
+        self.fields['category'].widget.attrs.update({'class': 'form-select'})
+
+class MultipleChoiceDistractorForm(forms.ModelForm):
+    class Meta:
+        model = MultipleChoiceDistractor
+        fields = ['distractor']
+        widgets = {
+            'distractor': forms.Textarea(attrs={'rows': 2}),
+        }
+
+MultipleChoiceDistractorFormSet = forms.inlineformset_factory(
+    MultipleChoice, 
+    MultipleChoiceDistractor,
+    form=MultipleChoiceDistractorForm,
+    extra=3,
+    min_num=2,
+    max_num=4,
+    validate_min=True
+)
