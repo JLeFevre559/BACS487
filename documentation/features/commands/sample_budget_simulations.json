@@ -1,0 +1,130 @@
+[
+    {
+      "question": "Create a monthly budget for a recent college graduate with their first full-time job",
+      "monthly_income": 3500.00,
+      "difficulty": "B",
+      "expenses": [
+        {
+          "name": "Rent",
+          "amount": 1200.00,
+          "feedback": "Housing should typically be no more than 30% of your income. Consider roommates to reduce costs.",
+          "essential": true
+        },
+        {
+          "name": "Utilities",
+          "amount": 150.00,
+          "feedback": "Be energy-conscious to keep these costs down.",
+          "essential": true
+        },
+        {
+          "name": "Groceries",
+          "amount": 400.00,
+          "feedback": "Meal planning and cooking at home can significantly reduce food expenses.",
+          "essential": true
+        },
+        {
+          "name": "Transportation",
+          "amount": 250.00,
+          "feedback": "Consider public transportation or carpooling to save money.",
+          "essential": true
+        },
+        {
+          "name": "Student Loan Payment",
+          "amount": 350.00,
+          "feedback": "Always pay at least the minimum on student loans to avoid penalties.",
+          "essential": true
+        },
+        {
+          "name": "Entertainment",
+          "amount": 200.00,
+          "feedback": "Look for free or low-cost entertainment options to reduce this expense.",
+          "essential": false
+        },
+        {
+          "name": "Dining Out",
+          "amount": 250.00,
+          "feedback": "Limiting dining out can be one of the easiest ways to save money.",
+          "essential": false
+        },
+        {
+          "name": "Savings",
+          "amount": 500.00,
+          "feedback": "Aim to save at least 15% of your income for emergencies and future goals.",
+          "essential": false
+        },
+        {
+          "name": "Gym Membership",
+          "amount": 50.00,
+          "feedback": "Consider free exercise alternatives or negotiate for a better rate.",
+          "essential": false
+        }
+      ]
+    },
+    {
+      "question": "Create a budget for a family of four with one working parent",
+      "monthly_income": 5000.00,
+      "difficulty": "I",
+      "expenses": [
+        {
+          "name": "Mortgage",
+          "amount": 1800.00,
+          "feedback": "Housing costs are typically the largest expense for families.",
+          "essential": true
+        },
+        {
+          "name": "Utilities",
+          "amount": 300.00,
+          "feedback": "Energy-efficient appliances and habits can reduce these costs.",
+          "essential": true
+        },
+        {
+          "name": "Groceries",
+          "amount": 800.00,
+          "feedback": "Buying in bulk and planning meals can help reduce food costs for larger families.",
+          "essential": true
+        },
+        {
+          "name": "Car Payment",
+          "amount": 400.00,
+          "feedback": "Consider if a less expensive vehicle might meet your needs.",
+          "essential": true
+        },
+        {
+          "name": "Insurance (Health, Auto, Home)",
+          "amount": 600.00,
+          "feedback": "Shop around annually to ensure you're getting the best rates.",
+          "essential": true
+        },
+        {
+          "name": "Childcare",
+          "amount": 800.00,
+          "feedback": "Look into flexible spending accounts or tax credits to offset these costs.",
+          "essential": true
+        },
+        {
+          "name": "Entertainment & Activities",
+          "amount": 300.00,
+          "feedback": "Look for family-friendly free events in your community.",
+          "essential": false
+        },
+        {
+          "name": "Dining Out",
+          "amount": 200.00,
+          "feedback": "Limit restaurant meals to special occasions to save money.",
+          "essential": false
+        },
+        {
+          "name": "Clothes & Personal Items",
+          "amount": 200.00,
+          "feedback": "Consider secondhand stores for growing children.",
+          "essential": false
+        },
+        {
+          "name": "Savings",
+          "amount": 300.00,
+          "feedback": "Even small amounts of savings can add up over time.",
+          "essential": false
+        }
+      ]
+    }
+  ]

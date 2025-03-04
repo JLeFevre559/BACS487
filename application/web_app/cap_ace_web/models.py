@@ -138,3 +138,6 @@ class Expense(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     feedback = models.TextField()
     essential = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.name}: ${self.amount}" + (" (Essential)" if self.essential else "")
