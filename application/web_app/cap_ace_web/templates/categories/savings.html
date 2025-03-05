@@ -1,6 +1,6 @@
 {% extends "theme.html" %}
 {% block content %}
-
+{% load static %}
 
 <div class="card-header">
     <h2 class="section-title">Learn About Savings</h2>
@@ -15,6 +15,7 @@
             <div class="card-header">
                 <i class="{{ category.icon }}"></i>
                 <h3>{{name.title}}</h3>
+                <img src="{% static 'images/'|add:name.title|add:'.png' %}" width="100px" alt="Logo">
             </div>
             
             <div class="progress-info">

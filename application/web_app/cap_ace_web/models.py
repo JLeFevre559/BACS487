@@ -38,9 +38,24 @@ class Cap_Ace_User(AbstractUser):
     def __str__(self):
         return self.username
 
+class FillInTheBlank(models.Model):
+    
+    CATEGORIES = [
+        ('BUD', 'Budgeting'),
+        ('INV', 'Investing'),
+        ('SAV', 'Savings'),
+        ('BAL', 'Balance Sheet'),
+        ('CRD', 'Credit'),
+        ('TAX', 'Taxes')
+    ]
+
+    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
+    question = models.TextField()
+    answer = models.TextField()
+
+    
 class MultipleChoice(models.Model):
     
-
     CATEGORIES = [
         ('BUD', 'Budgeting'),
         ('INV', 'Investing'),
