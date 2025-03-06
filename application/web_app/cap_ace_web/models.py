@@ -52,8 +52,9 @@ class FillInTheBlank(models.Model):
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
     question = models.TextField()
     answer = models.TextField()
+    missing_word = models.CharField()
 
-    
+
 class MultipleChoice(models.Model):
     
     CATEGORIES = [
@@ -74,6 +75,8 @@ class MultipleChoice(models.Model):
     def __str__(self):
         return f"Multiple Choice: {self.question}..."
     
+
+
 class MultipleChoiceDistractor(models.Model):
     question = models.ForeignKey(MultipleChoice, on_delete=models.CASCADE, related_name='distractors')
     distractor = models.TextField()

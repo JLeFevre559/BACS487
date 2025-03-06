@@ -4,8 +4,10 @@ from .views import  (Index, UserListView, UserCreateView, UserDetailView, UserUp
                     MultipleChoiceListView, MultipleChoiceDetailView, MultipleChoiceCreateView, MultipleChoiceUpdateView, MultipleChoiceDeleteView)
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
-from .import views
+from .import views 
+from .game_views import FillInTheBlankListView, FillInTheBlankDetailView, FillInTheBlankCreateView
 from .category_views import BudgetView, SavingsView, InvestingView, TaxesView, CreditView, BalanceSheetView
+
 
 urlpatterns = [
     path("", Index.as_view(), name="index"),
@@ -34,4 +36,9 @@ urlpatterns = [
     path('multiple-choice/create/', MultipleChoiceCreateView.as_view(), name='multiple_choice_create'),
     path('multiple-choice/<int:pk>/edit/', MultipleChoiceUpdateView.as_view(), name='multiple_choice_edit'),
     path('multiple-choice/<int:pk>/delete/', MultipleChoiceDeleteView.as_view(), name='multiple_choice_delete'),
+
+    # paths to Fill in the Blank games
+    path('fill-blank/', FillInTheBlankListView.as_view(), name='fill_blank_list'),
+    path('fill-blank/create', FillInTheBlankCreateView.as_view(), name='fill_blank_create'),
+    path('fill-blank/<int:pk>/', FillInTheBlankDetailView.as_view(), name='fill_blank_detail'),
 ]
