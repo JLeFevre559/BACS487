@@ -43,10 +43,12 @@ urlpatterns = [
     path('fill-blank/<int:pk>/', FillInTheBlankDetailView.as_view(), name='fill_blank_detail'),
 
 ]
+
 from django.urls import path
 from . import views
 
 urlpatterns = [
     path('register/', views.register, name='register'),
-    path('', views.home, name='home'),  # Home route
+    path('login/', views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('', views.home, name='home'),  # Adjust based on homepage view
 ]
