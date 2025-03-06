@@ -41,6 +41,30 @@ class FillInTheBlankCreateView(LoginRequiredMixin, StaffRequiredMixin, ListView)
         else:
             context['form'] = FillInTheBlankForm()
         return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        fill_form = context['form']
+        
+        if fill_form.is_valid():
+            self.object = fill_form.save()
+            fill_form.instance = self.object
+            fill_form.save()
+            messages.success(self.request, 'Fill in the Blank question created successfully.')
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+        
+
+class FillInTheBlankDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
+    model = FillInTheBlank
+    template_name = 'fill-blank/delete.html'
+    success_url = reverse_lazy('fill_blank_list')
+    context_object_name = 'question'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Fill in the Blank question deleted successfully.')
+        return super().delete(request, *args, **kwargs)
 
 # Multiple Choice Views
 class MultipleChoiceListView(LoginRequiredMixin, StaffRequiredMixin, ListView):

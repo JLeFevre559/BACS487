@@ -53,6 +53,8 @@ class FillInTheBlank(models.Model):
     question = models.TextField()
     answer = models.TextField()
     missing_word = models.CharField()
+    def __str__(self):
+        return f"Fill in the Blank: {self.question}..."
 
 
 class MultipleChoice(models.Model):

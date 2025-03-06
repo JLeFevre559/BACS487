@@ -39,6 +39,7 @@ urlpatterns = [
 
     # paths to Fill in the Blank games
     path('fill-blank/', FillInTheBlankListView.as_view(), name='fill_blank_list'),
-    path('fill-blank/create', FillInTheBlankCreateView.as_view(), name='fill_blank_create'),
+    path('fill-blank/create/', FillInTheBlankCreateView.as_view(), name='fill_blank_create'),
     path('fill-blank/<int:pk>/', FillInTheBlankDetailView.as_view(), name='fill_blank_detail'),
+
 ]
