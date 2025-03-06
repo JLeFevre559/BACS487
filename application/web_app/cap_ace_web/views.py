@@ -272,3 +272,28 @@ class MultipleChoiceDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteVie
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Multiple choice question deleted successfully.')
         return super().delete(request, *args, **kwargs)
+    
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        password_confirm = request.POST['password_confirm']
+        
+        if password != password_confirm:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'registration/register.html')
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, 'registration/register.html')
+
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+
+        # Automatically log the user in
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect to home or dashboard
+        
+    return render(request, 'registration/register.html')
