@@ -59,6 +59,10 @@ class Command(BaseCommand):
                         difficulty=difficulty
                     )
 
+                    # Check that a question with the same text doesn't already exist
+                    if BudgetSimulation.objects.filter(question=question).exists():
+                        raise ValidationError(f'Simulation {index}: Question already exists')
+
                     # Check if this is just a validation run
                     if dry_run:
                         # Don't save, just validate
