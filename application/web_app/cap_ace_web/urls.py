@@ -21,8 +21,8 @@ urlpatterns = [
     path('users/', include('django.contrib.auth.urls')),
     path('learn/', learningview.as_view(), name='learn'),
      path('register/', views.register, name='register'),
-    # path('login/', views.LoginView.as_view(template_name='registration/login.html'), name='login'),
-    # path('', views.home, name='home'),  # Adjust based on homepage view,
+    path('login/', views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('', views.home, name='home'),  # Adjust based on homepage view,
     
     
     # Paths to Learning Category pages where users can navigate to learning games 
