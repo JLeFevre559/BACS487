@@ -15,17 +15,69 @@ class CustomUserAdmin(UserAdmin):
     model = User
     list_display = ['username', 'email', 'last_done', 'is_staff', 'is_active']
     list_filter = ['is_staff', 'is_active', 'last_done']
-    fieldsets = UserAdmin.fieldsets + (
-        ('Progress', {'fields': ('last_done', 'budget_xp', 'investing_xp', 'savings_xp', 'balance_sheet_xp', 'credit_xp', 'taxes_xp', )}),
+    
+    # Fieldsets for viewing a user
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        ('Progress', {'fields': ('last_done', 'budget_xp', 'investing_xp', 'savings_xp', 
+                                'balance_sheet_xp', 'credit_xp', 'taxes_xp')}),
     )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Optional Fields', {
+    
+    # Fieldsets for adding a user - make most fields optional
+    add_fieldsets = (
+        (None, {
             'classes': ('wide',),
-            'fields': ('email', 'last_done', 'budget_xp', 'investing_xp', 'savings_xp', 'balance_sheet_xp', 'credit_xp', 'taxes_xp')}
-        ),
+            'fields': ('username', 'password1', 'password2'),
+        }),
+        ('Personal info', {
+            'classes': ('wide',),
+            'fields': ('email', ),
+        }),
+        ('Permissions', {
+            'classes': ('wide',),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups'),
+        }),
     )
-    search_fields = ['username', 'email']
+    
+    search_fields = ['username', 'email', 'first_name', 'last_name']
     ordering = ['username']
+    
+    # Make sure all custom fields have default values to simplify user creation
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        is_superuser = request.user.is_superuser
+        
+        # Help text for non-superusers
+        if not is_superuser:
+            form.base_fields['is_superuser'].disabled = True
+            form.base_fields['user_permissions'].disabled = True
+            
+        return form
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Override save_model to ensure all fields have appropriate default values
+        when creating a new user
+        """
+        if not change:  # Only when creating a new user
+            # Set default values for XP fields if they're None
+            if obj.budget_xp is None:
+                obj.budget_xp = 0
+            if obj.investing_xp is None:
+                obj.investing_xp = 0
+            if obj.savings_xp is None:
+                obj.savings_xp = 0
+            if obj.balance_sheet_xp is None:
+                obj.balance_sheet_xp = 0
+            if obj.credit_xp is None:
+                obj.credit_xp = 0
+            if obj.taxes_xp is None:
+                obj.taxes_xp = 0
+                
+        super().save_model(request, obj, form, change)
 
 class MultipleChoiceDistractorInline(admin.TabularInline):
     model = MultipleChoiceDistractor
