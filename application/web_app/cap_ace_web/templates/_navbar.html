@@ -1,24 +1,41 @@
 {% load static %}
 <nav class="navbar navbar-expand-sm navbar-dark bg-primary text-light">
-    <!-- Logo image on the left -->
+    <!-- Logo -->
     <a class="navbar-brand ml-2" href="{% url 'home' %}">
         <img src="{% static 'images/kashoo logo with name.png' %}" width="100px" alt="Logo">
     </a>
 
-    <!-- Container for alignment -->
-    <div class="d-flex flex-grow-1 justify-content-end align-items-center">
+    <!-- Navbar Toggler Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Collapsible Content -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <div class="navbar-nav">
             <a class="nav-item nav-link text-light" href="{% url 'learn' %}" style="font-size: 1.1rem; margin-right: 20px;">Learn</a>
             <a class="nav-item nav-link text-light" href="#" style="font-size: 1.1rem; margin-right: 20px;">Your Progress</a>
 
-            {% if user.is_authenticated %}
-                <a class="nav-item nav-link text-light navbar-button" href="{% url 'user_detail' user.pk %}" style="font-size: 1.1rem; margin-right: 20px;">{{ user.username }}</a>
-                {% if user.is_superuser %}
-                    <a class="nav-item nav-link text-light navbar-button" href="{% url 'user_list' %}" style="font-size: 1.1rem; margin-right: 20px;">User List</a>
-                {% endif %}
-            {% else %}
-                <a class="nav-item nav-link text-light navbar-button" href="{% url 'login' %}" style="font-size: 1.1rem; margin-right: 20px;">Login</a>
-            {% endif %}
+            <!-- Dropdown Menu for Login & User List -->
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-light" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.1rem;">
+                    {% if user.is_authenticated %}
+                        {{ user.username }}
+                    {% else %}
+                        Account
+                    {% endif %}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end bg-light" aria-labelledby="userDropdown">
+                    {% if user.is_authenticated %}
+                        <li><a class="dropdown-item" href="{% url 'user_detail' user.pk %}">Profile</a></li>
+                        {% if user.is_superuser %}
+                            <li><a class="dropdown-item" href="{% url 'user_list' %}">User List</a></li>
+                        {% endif %}
+                    {% else %}
+                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
