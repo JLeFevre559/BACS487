@@ -28,7 +28,7 @@
   background-color: rgb(1,19,45) !important;
 }
 .card {
-  background-color: var(--bs-blue);
+  background-color: var(--bs-primary-rgb) !important;
   color:var(--bs-light);
   margin: 15px;
   padding: 20px;

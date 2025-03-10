@@ -9,20 +9,27 @@ DIFFICULTIES = [
         ('I', 'Intermediate'),
         ('A', 'Advanced')
 ]
-
-    
-class Cap_Ace_User(AbstractUser):
-    CATEGORIES = [
+QUESTION_TYPES = [
         ('MC', 'Multiple Choice'),
         ('FIB', 'Fill in Blank'),
         ('MAD', 'Match and Drag'),
         ('FC', 'Flash Card'),
         ('BS', 'Budget Simulation')
     ]
+CATEGORIES = [
+        ('BUD', 'Budgeting'),
+        ('INV', 'Investing'),
+        ('SAV', 'Savings'),
+        ('BAL', 'Balance Sheet'),
+        ('CRD', 'Credit'),
+        ('TAX', 'Taxes')
+]    
+class Cap_Ace_User(AbstractUser):
+    
     
     last_done = models.CharField(
         max_length=3,
-        choices=CATEGORIES,
+        choices=QUESTION_TYPES,
         null=True,
         blank=True
     )
@@ -39,15 +46,6 @@ class Cap_Ace_User(AbstractUser):
         return self.username
 
 class FillInTheBlank(models.Model):
-    
-    CATEGORIES = [
-        ('BUD', 'Budgeting'),
-        ('INV', 'Investing'),
-        ('SAV', 'Savings'),
-        ('BAL', 'Balance Sheet'),
-        ('CRD', 'Credit'),
-        ('TAX', 'Taxes')
-    ]
 
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
     question = models.TextField()
@@ -58,15 +56,6 @@ class FillInTheBlank(models.Model):
 
 
 class MultipleChoice(models.Model):
-    
-    CATEGORIES = [
-        ('BUD', 'Budgeting'),
-        ('INV', 'Investing'),
-        ('SAV', 'Savings'),
-        ('BAL', 'Balance Sheet'),
-        ('CRD', 'Credit'),
-        ('TAX', 'Taxes')
-    ]
 
     category = models.CharField(max_length=100, choices=CATEGORIES)
     question = models.TextField()
@@ -87,22 +76,6 @@ class MultipleChoiceDistractor(models.Model):
         return f"Distractor for {self.question.id}: {self.distractor}"
     
 class QuestionProgress(models.Model):
-    QUESTION_TYPES = [
-        ('MC', 'Multiple Choice'),
-        ('FIB', 'Fill in Blank'),
-        ('MAD', 'Match and Drag'),
-        ('FC', 'Flash Card'),
-        ('BS', 'Budget Simulation')
-    ]
-    
-    CATEGORIES = [
-        ('BUD', 'Budgeting'),
-        ('INV', 'Investing'),
-        ('SAV', 'Savings'),
-        ('BAL', 'Balance Sheet'),
-        ('CRD', 'Credit'),
-        ('TAX', 'Taxes')
-    ]
 
     user = models.ForeignKey(Cap_Ace_User, on_delete=models.CASCADE)
     question_id = models.IntegerField()

@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, CATEGORIES
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.shortcuts import render
@@ -9,6 +9,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView,
 from django.db.models import Count
 from django.contrib import messages
 from django.shortcuts import redirect
+
 
 # Financial Data Feed Dashbaord View
 
@@ -30,7 +31,7 @@ class learningview(LoginRequiredMixin, TemplateView):
         # Get all available questions per category
         total_questions = {
             category[0]: MultipleChoice.objects.filter(category=category[0]).count()
-            for category in QuestionProgress.CATEGORIES
+            for category in CATEGORIES
         }
         
         # Get completed questions for the user by category
@@ -47,7 +48,7 @@ class learningview(LoginRequiredMixin, TemplateView):
         XP_PER_LEVEL = 20
         MAX_LEVEL = 30
         
-        for category_code, category_name in QuestionProgress.CATEGORIES:
+        for category_code, category_name in CATEGORIES:
             # Get number of completed questions for this category
             completed = next(
                 (item['completed'] for item in completed_questions 
