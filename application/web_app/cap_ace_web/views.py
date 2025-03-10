@@ -28,6 +28,9 @@ class learningview(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # Get current user
+        user = self.request.user
+        
         # Get all available questions per category
         total_questions = {
             category[0]: MultipleChoice.objects.filter(category=category[0]).count()
@@ -37,16 +40,25 @@ class learningview(LoginRequiredMixin, TemplateView):
         # Get completed questions for the user by category
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=user)
             .values('category')
             .annotate(completed=Count('question_id'))
         )
         
         # Calculate progress for each category
         categories = {}
-        XP_PER_QUESTION = 10
-        XP_PER_LEVEL = 20
+        XP_PER_LEVEL = 140
         MAX_LEVEL = 30
+        
+        # Mapping for category codes to user XP fields
+        xp_field_mapping = {
+            'BUD': 'budget_xp',
+            'INV': 'investing_xp',
+            'SAV': 'savings_xp',
+            'BAL': 'balance_sheet_xp',
+            'CRD': 'credit_xp',
+            'TAX': 'taxes_xp',
+        }
         
         for category_code, category_name in CATEGORIES:
             # Get number of completed questions for this category
@@ -58,8 +70,11 @@ class learningview(LoginRequiredMixin, TemplateView):
             
             total = total_questions.get(category_code, 0)
             
-            # Calculate XP and level
-            xp = completed * XP_PER_QUESTION
+            # Get XP directly from the user model
+            xp_field = xp_field_mapping.get(category_code)
+            xp = getattr(user, xp_field, 0) if xp_field else 0
+            
+            # Calculate level and progress based on XP
             level = min(xp // XP_PER_LEVEL, MAX_LEVEL)
             progress_to_next = (xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100 if level < MAX_LEVEL else 100
             
