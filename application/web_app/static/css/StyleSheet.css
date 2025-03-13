@@ -28,7 +28,7 @@
   background-color: rgb(1,19,45) !important;
 }
 .card {
-  background-color: var(--bs-blue);
+  background-color: var(--bs-primary-rgb) !important;
   color:var(--bs-light);
   margin: 15px;
   padding: 20px;
@@ -85,7 +85,6 @@ input[type="text"], .form-control {
   text-align: center;
 }
 
-<<<<<<< HEAD
 nav {
   background-color: var(--bs-blue); 
   color: white;
@@ -112,7 +111,6 @@ nav {
 
   
 
-=======
 .content-container {
   display: flex;  
   gap: 20px;      
@@ -122,4 +120,3 @@ nav {
   .content-container {
       flex-direction: column; }
 }
->>>>>>> e7e1c5461ce63167fcc797bcf5785d036f449462

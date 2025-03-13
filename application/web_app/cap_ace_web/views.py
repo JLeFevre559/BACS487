@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, CATEGORIES
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.shortcuts import render
@@ -10,6 +10,7 @@ from django.db.models import Count
 from django.contrib import messages
 from django.shortcuts import redirect
 
+
 # Financial Data Feed Dashbaord View
 
 
@@ -19,263 +20,7 @@ User = get_user_model()
 class Index(TemplateView):
     template_name = "home_dashboard.html"
 
-#GameViews - Should we Make a new views.py file for the game specific views?
 
-class BalanceSheetView(LoginRequiredMixin, TemplateView):
-    template_name = "categories/balance_sheet.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        #completed Question by question Type?
-        completed_questions = (
-            QuestionProgress.objects
-            .filter(user=self.request.user)
-            .values('question_type')
-            .annotate(completed=Count('question_id'))
-        )
-
-        learning_games = {}
-            #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
-            completed = next(
-                (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
-                0
-            )
-
-            url_mapping = {
-                'MC': '/balance-multiplechoice/',
-                'FIB': '/balance-fill-blank/',
-                'MAD': '/balance-match-drag/',
-                'FC': '/balance-flashcard/',
-                'BS': '/balance-budgetsimulation/'
-            }
-            learning_games[game_code] = {
-                'title': game_name,
-                'url': '/learn' + url_mapping.get(game_code, '/'),
-                
-            }
-        context.update({
-            'learning_games': learning_games,
-            
-        })
-        return context
-
-
-class CreditView(LoginRequiredMixin, TemplateView):
-    template_name = "categories/credit.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        #completed Question by question Type?
-        completed_questions = (
-            QuestionProgress.objects
-            .filter(user=self.request.user)
-            .values('question_type')
-            .annotate(completed=Count('question_id'))
-        )
-
-        learning_games = {}
-            #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
-            completed = next(
-                (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
-                0
-            )
-
-            url_mapping = {
-                'MC': '/credit-multiplechoice/',
-                'FIB': '/credit-fill-blank/',
-                'MAD': '/credit-match-drag/',
-                'FC': '/credit-flashcard/',
-                'BS': '/credit-budgetsimulation/'
-            }
-            learning_games[game_code] = {
-                'title': game_name,
-                'url': '/learn' + url_mapping.get(game_code, '/'),
-                
-            }
-        context.update({
-            'learning_games': learning_games,
-            
-        })
-        return context
-
-
-
-
-class TaxesView(LoginRequiredMixin, TemplateView):
-    template_name = "categories/taxes.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        #completed Question by question Type?
-        completed_questions = (
-            QuestionProgress.objects
-            .filter(user=self.request.user)
-            .values('question_type')
-            .annotate(completed=Count('question_id'))
-        )
-
-        learning_games = {}
-            #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
-            completed = next(
-                (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
-                0
-            )
-
-            url_mapping = {
-                'MC': '/taxes-multiplechoice/',
-                'FIB': '/taxes-fill-blank/',
-                'MAD': '/taxes-match-drag/',
-                'FC': '/taxes-flashcard/',
-                'BS': '/taxes-budgetsimulation/'
-            }
-            learning_games[game_code] = {
-                'title': game_name,
-                'url': '/learn' + url_mapping.get(game_code, '/'),
-                
-            }
-        context.update({
-            'learning_games': learning_games,
-            
-        })
-        return context
-
-
-
-
-class InvestingView(LoginRequiredMixin, TemplateView):
-    template_name = "categories/investing.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        #completed Question by question Type?
-        completed_questions = (
-            QuestionProgress.objects
-            .filter(user=self.request.user)
-            .values('question_type')
-            .annotate(completed=Count('question_id'))
-        )
-
-        learning_games = {}
-            #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
-            completed = next(
-                (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
-                0
-            )
-
-            url_mapping = {
-                'MC': '/investing-multiplechoice/',
-                'FIB': '/investing-fill-blank/',
-                'MAD': '/investing-match-drag/',
-                'FC': '/investing-flashcard/',
-                'BS': '/investing-budgetsimulation/'
-            }
-            learning_games[game_code] = {
-                'title': game_name,
-                'url': '/learn' + url_mapping.get(game_code, '/'),
-                
-            }
-        context.update({
-            'learning_games': learning_games,
-            
-        })
-        return context
-
-
-
-
-class SavingsView(LoginRequiredMixin, TemplateView):
-    template_name = "categories/savings.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        #completed Question by question Type?
-        completed_questions = (
-            QuestionProgress.objects
-            .filter(user=self.request.user)
-            .values('question_type')
-            .annotate(completed=Count('question_id'))
-        )
-
-        learning_games = {}
-            #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
-            completed = next(
-                (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
-                0
-            )
-
-            url_mapping = {
-                'MC': '/savings-multiplechoice/',
-                'FIB': '/savings-fill-blank/',
-                'MAD': '/savings-match-drag/',
-                'FC': '/savings-flashcard/',
-                'BS': '/savings-budgetsimulation/'
-            }
-            learning_games[game_code] = {
-                'title': game_name,
-                'url': '/learn' + url_mapping.get(game_code, '/'),
-                
-            }
-        context.update({
-            'learning_games': learning_games,
-            
-        })
-        return context
-
-class BudgetView(LoginRequiredMixin, TemplateView):
-    template_name = "categories/budget.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        #completed Question by question Type?
-        completed_questions = (
-            QuestionProgress.objects
-            .filter(user=self.request.user)
-            .values('question_type')
-            .annotate(completed=Count('question_id'))
-        )
-
-        learning_games = {}
-            #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
-            completed = next(
-                (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
-                0
-            )
-
-            url_mapping = {
-                'MC': '/budget-multiplechoice/',
-                'FIB': '/budget-fill-blank/',
-                'MAD': '/budget-match-drag/',
-                'FC': '/budget-flashcard/',
-                'BS': '/budget-budgetsimulation/'
-            }
-            learning_games[game_code] = {
-                'title': game_name,
-                'url': '/learn' + url_mapping.get(game_code, '/'),
-                
-            }
-        context.update({
-            'learning_games': learning_games,
-            
-        })
-        return context
 
 class learningview(LoginRequiredMixin, TemplateView):
     template_name = 'customizelearning.html'
@@ -283,27 +28,39 @@ class learningview(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # Get current user
+        user = self.request.user
+        
         # Get all available questions per category
         total_questions = {
             category[0]: MultipleChoice.objects.filter(category=category[0]).count()
-            for category in QuestionProgress.CATEGORIES
+            for category in CATEGORIES
         }
         
         # Get completed questions for the user by category
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=user)
             .values('category')
             .annotate(completed=Count('question_id'))
         )
         
         # Calculate progress for each category
         categories = {}
-        XP_PER_QUESTION = 10
-        XP_PER_LEVEL = 20
+        XP_PER_LEVEL = 140
         MAX_LEVEL = 30
         
-        for category_code, category_name in QuestionProgress.CATEGORIES:
+        # Mapping for category codes to user XP fields
+        xp_field_mapping = {
+            'BUD': 'budget_xp',
+            'INV': 'investing_xp',
+            'SAV': 'savings_xp',
+            'BAL': 'balance_sheet_xp',
+            'CRD': 'credit_xp',
+            'TAX': 'taxes_xp',
+        }
+        
+        for category_code, category_name in CATEGORIES:
             # Get number of completed questions for this category
             completed = next(
                 (item['completed'] for item in completed_questions 
@@ -313,8 +70,11 @@ class learningview(LoginRequiredMixin, TemplateView):
             
             total = total_questions.get(category_code, 0)
             
-            # Calculate XP and level
-            xp = completed * XP_PER_QUESTION
+            # Get XP directly from the user model
+            xp_field = xp_field_mapping.get(category_code)
+            xp = getattr(user, xp_field, 0) if xp_field else 0
+            
+            # Calculate level and progress based on XP
             level = min(xp // XP_PER_LEVEL, MAX_LEVEL)
             progress_to_next = (xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100 if level < MAX_LEVEL else 100
             
@@ -528,3 +288,28 @@ class MultipleChoiceDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteVie
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, 'Multiple choice question deleted successfully.')
         return super().delete(request, *args, **kwargs)
+    
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        password_confirm = request.POST['password_confirm']
+        
+        if password != password_confirm:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'registration/register.html')
+        
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, 'registration/register.html')
+
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+
+        # Automatically log the user in
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect to home or dashboard
+        
+    return render(request, 'registration/register.html')

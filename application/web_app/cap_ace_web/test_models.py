@@ -1,8 +1,10 @@
 from django.test import TestCase, Client
 from django.contrib.auth import authenticate, get_user_model
 from django.apps import apps
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, BudgetSimulation, Expense
 from django.db import models
+from decimal import Decimal
+from django.core.exceptions import ValidationError
 
 class MultipleChoiceTest(TestCase):
     @classmethod
@@ -291,11 +293,198 @@ class SavingsGoal(models.Model):
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     current_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     goal_date = models.DateField()
-class BudgetCategory(models.Model):
-    name = models.CharField(max_length=100)
+# class BudgetCategory(models.Model):
+#     name = models.CharField(max_length=100)
 
-class Expense(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(BudgetCategory, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(auto_now_add=True)
+# class Expense(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     category = models.ForeignKey(BudgetCategory, on_delete=models.CASCADE)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     date = models.DateField(auto_now_add=True)
+
+class BudgetSimulationModelTests(TestCase):
+    def setUp(self):
+        """Set up test data."""
+        # Create a budget simulation with valid data
+        self.budget_sim = BudgetSimulation.objects.create(
+            question="Create a monthly budget for a student",
+            monthly_income=Decimal('2000.00'),
+            difficulty='B'
+        )
+        
+        # Add expenses
+        self.rent = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Rent",
+            amount=Decimal('800.00'),
+            feedback="Consider getting roommates to reduce costs.",
+            essential=True
+        )
+        
+        self.groceries = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Groceries",
+            amount=Decimal('300.00'),
+            feedback="Buy in bulk to save money.",
+            essential=True
+        )
+        
+        self.entertainment = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Entertainment",
+            amount=Decimal('150.00'),
+            feedback="Look for free entertainment options.",
+            essential=False
+        )
+
+    def test_budget_simulation_creation(self):
+        """Test that a budget simulation can be created with valid data."""
+        self.assertEqual(self.budget_sim.question, "Create a monthly budget for a student")
+        self.assertEqual(self.budget_sim.monthly_income, Decimal('2000.00'))
+        self.assertEqual(self.budget_sim.difficulty, 'B')
+        
+    def test_expense_creation(self):
+        """Test that expenses can be created and associated with a budget simulation."""
+        self.assertEqual(self.rent.name, "Rent")
+        self.assertEqual(self.rent.amount, Decimal('800.00'))
+        self.assertTrue(self.rent.essential)
+        
+        # Test relationship from budget sim to expenses
+        expenses = self.budget_sim.expenses.all()
+        self.assertEqual(expenses.count(), 3)
+    
+    def test_expense_string_representation(self):
+        """Test the string representation of an expense."""
+        self.assertEqual(str(self.rent), "Rent: $800.00 (Essential)")
+        self.assertEqual(str(self.entertainment), "Entertainment: $150.00")
+    
+    def test_valid_essential_expenses(self):
+        """Test that a budget simulation with valid essential expenses passes validation."""
+        # Current essential expenses total: $1100 (rent + groceries)
+        # Monthly income: $2000
+        # Should be valid
+        self.budget_sim.clean()  # Should not raise ValidationError
+    
+    def test_invalid_essential_expenses(self):
+        """Test that a budget simulation with invalid essential expenses fails validation."""
+        # Add another essential expense that pushes total over income
+        transportation = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Transportation",
+            amount=Decimal('1000.00'),
+            feedback="Consider public transportation.",
+            essential=True
+        )
+        
+        # Now essential expenses total: $2100 (rent + groceries + transportation)
+        # Monthly income: $2000
+        # Should be invalid
+        with self.assertRaises(ValidationError):
+            self.budget_sim.clean()
+    
+    def test_changing_expense_to_essential(self):
+        """Test validation when changing a non-essential expense to essential."""
+        # Change entertainment from non-essential to essential
+        self.entertainment.essential = True
+        self.entertainment.save()
+        
+        # Now essential expenses total: $1250 (rent + groceries + entertainment)
+        # Monthly income: $2000
+        # Should still be valid
+        self.budget_sim.clean()  # Should not raise ValidationError
+        
+        # Now increase entertainment amount to push over limit
+        self.entertainment.amount = Decimal('1000.00')
+        self.entertainment.save()
+        
+        # Now essential expenses total: $2100 (rent + groceries + entertainment)
+        # Should be invalid
+        with self.assertRaises(ValidationError):
+            self.budget_sim.clean()
+    
+    def test_update_monthly_income(self):
+        """Test validation when updating monthly income."""
+        # Reduce monthly income to less than essential expenses
+        self.budget_sim.monthly_income = Decimal('1000.00')
+        
+        # Now essential expenses total: $1100 (rent + groceries)
+        # Monthly income: $1000
+        # Should be invalid
+        with self.assertRaises(ValidationError):
+            self.budget_sim.clean()
+        
+        # Increase monthly income to valid level
+        self.budget_sim.monthly_income = Decimal('1200.00')
+        # Should now be valid
+        self.budget_sim.clean()  # Should not raise ValidationError
+    
+    def test_exactly_equal_income_and_essential_expenses(self):
+        """Test validation when essential expenses exactly equal monthly income."""
+        # Set monthly income to exactly match essential expenses
+        self.budget_sim.monthly_income = Decimal('1100.00')  # Equal to rent + groceries
+        
+        # Should be valid when exactly equal
+        self.budget_sim.clean()  # Should not raise ValidationError
+
+
+class ExpenseModelTests(TestCase):
+    def setUp(self):
+        """Set up test data."""
+        self.budget_sim = BudgetSimulation.objects.create(
+            question="Create a monthly budget for a family",
+            monthly_income=Decimal('5000.00'),
+            difficulty='I'
+        )
+    
+    def test_expense_defaults(self):
+        """Test that expense defaults are set correctly."""
+        expense = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Test Expense",
+            amount=Decimal('100.00'),
+            feedback="Test feedback"
+        )
+        
+        # essential should default to False
+        self.assertFalse(expense.essential)
+    
+    def test_expense_decimal_precision(self):
+        """Test that expense amount decimal precision is handled correctly."""
+        expense = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Precise Expense",
+            amount=Decimal('123.45'),
+            feedback="Test precision"
+        )
+        
+        self.assertEqual(expense.amount, Decimal('123.45'))
+        
+        # Test with more decimal places than the model allows
+        expense2 = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="Extra Precision",
+            amount=Decimal('123.4567'),
+            feedback="Test precision"
+        )
+        
+        # Should be truncated/rounded to 2 decimal places
+        retrieved = Expense.objects.get(pk=expense2.pk)
+        self.assertEqual(retrieved.amount, Decimal('123.46'))
+    
+    def test_cascade_deletion(self):
+        """Test that expenses are deleted when a budget simulation is deleted."""
+        expense = Expense.objects.create(
+            BudgetSimulation=self.budget_sim,
+            name="To Be Deleted",
+            amount=Decimal('100.00'),
+            feedback="Test cascade delete"
+        )
+        
+        # Confirm expense exists
+        self.assertEqual(Expense.objects.count(), 1)
+        
+        # Delete the budget simulation
+        self.budget_sim.delete()
+        
+        # Expense should be automatically deleted due to CASCADE
+        self.assertEqual(Expense.objects.count(), 0)

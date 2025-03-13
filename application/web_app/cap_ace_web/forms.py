@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, FillInTheBlank
 
 User = get_user_model()
 
@@ -55,6 +55,15 @@ class StockTickerForm(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={'placeholder': 'Enter tickers (comma separated)', 'class': 'form-control'})
     )
+
+
+class FillInTheBlankForm(forms.ModelForm):
+    class Meta:
+        model = FillInTheBlank
+        fields = ['question', 'answer', 'missing_word','difficulty']
+        widget=forms.TextInput(attrs={'placeholder': 'Enter Missing Word', 'class': 'form-control'})
+    
+
 
 class MultipleChoiceForm(forms.ModelForm):
     class Meta:

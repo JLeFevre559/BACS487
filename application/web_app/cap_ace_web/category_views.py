@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, QUESTION_TYPES
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.shortcuts import render
@@ -18,26 +18,26 @@ class BalanceSheetView(LoginRequiredMixin, TemplateView):
         #completed Question by question Type?
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=self.request.user, category='BAL')
             .values('question_type')
             .annotate(completed=Count('question_id'))
         )
 
         learning_games = {}
             #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
+        for game_code, game_name in QUESTION_TYPES:
             completed = next(
                 (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
+                 if item['question_type'] == game_code),
                 0
             )
 
             url_mapping = {
-                'MC': '/balance-multiplechoice/',
-                'FIB': '/balance-fill-blank/',
-                'MAD': '/balance-match-drag/',
-                'FC': '/balance-flashcard/',
-                'BS': '/balance-budgetsimulation/'
+                'MC': '/balance/multiplechoice/',
+                'FIB': '/balance/fill-blank/',
+                'MAD': '/balance/match-drag/',
+                'FC': '/balance/flashcard/',
+                'BS': '/balance/budgetsimulation/'
             }
             learning_games[game_code] = {
                 'title': game_name,
@@ -60,26 +60,26 @@ class CreditView(LoginRequiredMixin, TemplateView):
         #completed Question by question Type?
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=self.request.user, category='CRD')
             .values('question_type')
             .annotate(completed=Count('question_id'))
         )
 
         learning_games = {}
             #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
+        for game_code, game_name in QUESTION_TYPES:
             completed = next(
                 (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
+                 if item['question_type'] == game_code),
                 0
             )
 
             url_mapping = {
-                'MC': '/credit-multiplechoice/',
-                'FIB': '/credit-fill-blank/',
-                'MAD': '/credit-match-drag/',
-                'FC': '/credit-flashcard/',
-                'BS': '/credit-budgetsimulation/'
+                'MC': '/credit/multiplechoice/',
+                'FIB': '/credit/fill-blank/',
+                'MAD': '/credit/match-drag/',
+                'FC': '/credit/flashcard/',
+                'BS': '/credit/budgetsimulation/'
             }
             learning_games[game_code] = {
                 'title': game_name,
@@ -104,26 +104,26 @@ class TaxesView(LoginRequiredMixin, TemplateView):
         #completed Question by question Type?
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=self.request.user, category='TAX')
             .values('question_type')
             .annotate(completed=Count('question_id'))
         )
 
         learning_games = {}
             #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
+        for game_code, game_name in QUESTION_TYPES:
             completed = next(
                 (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
+                 if item['question_type'] == game_code),
                 0
             )
 
             url_mapping = {
-                'MC': '/taxes-multiplechoice/',
-                'FIB': '/taxes-fill-blank/',
-                'MAD': '/taxes-match-drag/',
-                'FC': '/taxes-flashcard/',
-                'BS': '/taxes-budgetsimulation/'
+                'MC': '/taxes/multiplechoice/',
+                'FIB': '/taxes/fill-blank/',
+                'MAD': '/taxes/match-drag/',
+                'FC': '/taxes/flashcard/',
+                'BS': '/taxes/budgetsimulation/'
             }
             learning_games[game_code] = {
                 'title': game_name,
@@ -148,26 +148,26 @@ class InvestingView(LoginRequiredMixin, TemplateView):
         #completed Question by question Type?
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=self.request.user, category='INV')
             .values('question_type')
             .annotate(completed=Count('question_id'))
         )
 
         learning_games = {}
             #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
+        for game_code, game_name in QUESTION_TYPES:
             completed = next(
                 (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
+                 if item['question_type'] == game_code),
                 0
             )
 
             url_mapping = {
-                'MC': '/investing-multiplechoice/',
-                'FIB': '/investing-fill-blank/',
-                'MAD': '/investing-match-drag/',
-                'FC': '/investing-flashcard/',
-                'BS': '/investing-budgetsimulation/'
+                'MC': '/investing/multiplechoice/',
+                'FIB': '/investing/fill-blank/',
+                'MAD': '/investing/match-drag/',
+                'FC': '/investing/flashcard/',
+                'BS': '/investing/budgetsimulation/'
             }
             learning_games[game_code] = {
                 'title': game_name,
@@ -192,26 +192,26 @@ class SavingsView(LoginRequiredMixin, TemplateView):
         #completed Question by question Type?
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter( user=self.request.user, category='SAV' )
             .values('question_type')
             .annotate(completed=Count('question_id'))
         )
 
         learning_games = {}
             #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
+        for game_code, game_name in QUESTION_TYPES:
             completed = next(
                 (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
+                 if item['question_type'] == game_code),
                 0
             )
 
             url_mapping = {
-                'MC': '/savings-multiplechoice/',
-                'FIB': '/savings-fill-blank/',
-                'MAD': '/savings-match-drag/',
-                'FC': '/savings-flashcard/',
-                'BS': '/savings-budgetsimulation/'
+                'MC': '/savings/multiplechoice/',
+                'FIB': '/savings/fill-blank/',
+                'MAD': '/savings/match-drag/',
+                'FC': '/savings/flashcard/',
+                'BS': '/savings/budgetsimulation/'
             }
             learning_games[game_code] = {
                 'title': game_name,
@@ -233,26 +233,27 @@ class BudgetView(LoginRequiredMixin, TemplateView):
         #completed Question by question Type?
         completed_questions = (
             QuestionProgress.objects
-            .filter(user=self.request.user)
+            .filter(user=self.request.user, category='BUD')
             .values('question_type')
             .annotate(completed=Count('question_id'))
         )
 
         learning_games = {}
             #Loop through for dashboard
-        for game_code, game_name in QuestionProgress.QUESTION_TYPES:
+        for game_code, game_name in QUESTION_TYPES:
+            print(game_code)
             completed = next(
                 (item['completed'] for item in completed_questions 
-                 if item['category'] == game_code),
+                 if item['question_type'] == game_code),
                 0
             )
 
             url_mapping = {
-                'MC': '/budget-multiplechoice/',
-                'FIB': '/budget-fill-blank/',
-                'MAD': '/budget-match-drag/',
-                'FC': '/budget-flashcard/',
-                'BS': '/budget-budgetsimulation/'
+                'MC': '/budget/multiplechoice/',
+                'FIB': '/budget/fill-blank/',
+                'MAD': '/budget/match-drag/',
+                'FC': '/budget/flashcard/',
+                'BS': '/budget/budgetsimulation/'
             }
             learning_games[game_code] = {
                 'title': game_name,
