@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import MultipleChoice, MultipleChoiceDistractor, BudgetSimulation, Expense
+from .models import MultipleChoice, MultipleChoiceDistractor, BudgetSimulation, Expense, FlashCard
 from django.core.exceptions import ValidationError
 from django.forms.models import BaseInlineFormSet
 from decimal import Decimal
@@ -189,7 +189,17 @@ class BudgetSimulationAdmin(admin.ModelAdmin):
                 level='WARNING'
             )
 
+class FlashCardAdmin(admin.ModelAdmin):
+    list_display = ('question', 'category', 'difficulty')
+    search_fields = ('question', 'answer', 'feedback')
+    list_filter = ('category', 'difficulty')
+    fieldsets = (
+        (None, {
+            'fields': ('question', 'answer', 'feedback', 'category', 'difficulty')
+        }),
+    )
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(MultipleChoice, MultipleChoiceAdmin)
 admin.site.register(BudgetSimulation, BudgetSimulationAdmin)
+admin.site.register(FlashCard, FlashCardAdmin)
