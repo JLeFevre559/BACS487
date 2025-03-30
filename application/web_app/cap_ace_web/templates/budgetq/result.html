@@ -1,0 +1,186 @@
+{% extends 'theme.html' %}
+{% load static %}
+{% block title %}Budget Simulation Success{% endblock %}
+
+{% block head %}
+<!-- Include Chart.js for pie chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'css/budget_simulation.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Successful Budget!</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h4 class="alert-heading">Congratulations!</h4>
+                        <p>You've successfully completed a {{ difficulty }} level budget simulation for {{ category_display }}!</p>
+                        {% if xp_earned %}
+                        <p class="mb-0 mt-2"><strong>You earned {{ xp_earned }} XP!</strong></p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="budget-summary">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Monthly Income: <span class="text-success">${{ monthly_income }}</span></h5>
+                                <h5>Selected Expenses: <span class="text-danger">${{ total_selected }}</span></h5>
+                                <h5>Remaining Budget: <span class="text-primary">${{ budget_difference }}</span></h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="budget-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4">Your Budget Choices:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Expense</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for expense in selected_expenses %}
+                                <tr>
+                                    <td>{{ expense.name }}</td>
+                                    <td>${{ expense.amount }}</td>
+                                    <td>
+                                        {% if expense.essential %}
+                                        <span class="badge bg-danger">Essential</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Optional</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'learn_'|add:category %}" class="btn btn-outline-secondary">Back to {{ category_display }} Learning</a>
+                        <a href="{% url 'play_budget_simulation' category %}" class="btn btn-primary">Next Simulation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Store data for JavaScript -->
+<script type="application/json" id="selected-expenses-data">
+    {{ selected_expenses_json|safe }}
+</script>
+<span id="monthly-income" style="display:none;">{{ monthly_income }}</span>
+<span id="total-selected" style="display:none;">{{ total_selected }}</span>
+
+<!-- Custom JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get expense data
+    const expensesDataElement = document.getElementById('selected-expenses-data');
+    const expensesData = JSON.parse(expensesDataElement.textContent);
+    
+    // Get budget values
+    const monthlyIncome = parseFloat(document.getElementById('monthly-income').textContent);
+    const totalSelected = parseFloat(document.getElementById('total-selected').textContent);
+    const remainingBudget = monthlyIncome - totalSelected;
+    
+    // Setup pie chart
+    const ctx = document.getElementById('budget-chart').getContext('2d');
+    
+    // Prepare data for chart
+    const expenseNames = expensesData.map(expense => expense.name);
+    const expenseAmounts = expensesData.map(expense => parseFloat(expense.amount));
+    
+    // Add remaining budget if positive
+    const chartLabels = [...expenseNames];
+    const chartData = [...expenseAmounts];
+    
+    if (remainingBudget > 0) {
+        chartLabels.push('Remaining');
+        chartData.push(remainingBudget);
+    }
+    
+    // Generate colors
+    const colors = generateColors(chartLabels.length);
+    
+    // Create chart
+    const budgetChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                backgroundColor: colors.map(c => c + '0.5)'),
+                borderColor: colors.map(c => c + '1)'),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+    
+    // Generate colors for chart
+    function generateColors(count) {
+        const colors = [];
+        for (let i = 0; i < count; i++) {
+            // Use a predefined color for "Remaining"
+            if (i === count - 1 && chartLabels[i] === 'Remaining') {
+                colors.push('rgba(54, 162, 235, ');
+            } else {
+                // Generate a color based on position in the spectrum
+                const hue = (i * 137.5) % 360; // Use golden angle approximation for distribution
+                colors.push(`rgba(${hslToRgb(hue / 360, 0.7, 0.5)}, `);
+            }
+        }
+        return colors;
+    }
+    
+    // Convert HSL to RGB for chart colors
+    function hslToRgb(h, s, l) {
+        let r, g, b;
+        
+        if (s === 0) {
+            r = g = b = l;
+        } else {
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+            
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+        
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    }
+});
+</script>
+{% endblock %}

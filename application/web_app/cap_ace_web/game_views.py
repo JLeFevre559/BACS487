@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, FillInTheBlank
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, FillInTheBlank, BudgetSimulation, Expense
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.shortcuts import render
@@ -13,6 +13,8 @@ from django.shortcuts import get_object_or_404
 import random
 from django.views import View
 from django.urls import reverse
+import json
+from django.http import JsonResponse
 
 
 
@@ -280,3 +282,245 @@ class MultipleChoiceGameView(LoginRequiredMixin, View):
         }
         
         return render(request, 'multiple_choice/result.html', context)
+    
+class BudgetSimulationGameView(LoginRequiredMixin, View):
+    template_name = 'budgetq/game.html'
+    
+    def get_random_simulation(self, user, category, difficulty=None):
+        """Get a random budget simulation that the user hasn't completed"""
+        # Map URL category to database category code
+        category_mapping = {
+            'budget': 'BUD',
+            'investing': 'INV',
+            'savings': 'SAV',
+            'balance': 'BAL',
+            'credit': 'CRD',
+            'taxes': 'TAX',
+        }
+        db_category = category_mapping.get(category, 'BUD')
+        
+        # First, get all completed simulation IDs for this user
+        completed_ids = QuestionProgress.objects.filter(
+            user=user,
+            question_type='BS',
+            category=db_category
+        ).values_list('question_id', flat=True)
+        
+        # Base query - find simulations for this category that haven't been completed
+        query = BudgetSimulation.objects.filter(category=db_category).exclude(id__in=completed_ids)
+        
+        # Apply difficulty filter if specified
+        if difficulty and difficulty in ['B', 'I', 'A']:
+            query = query.filter(difficulty=difficulty)
+            
+        # If there are no uncompleted questions, get all questions for this category
+        if not query.exists():
+            query = BudgetSimulation.objects.filter(category=db_category)
+            if difficulty and difficulty in ['B', 'I', 'A']:
+                query = query.filter(difficulty=difficulty)
+                
+        # If there are still no questions, return None
+        if not query.exists():
+            return None
+            
+        # Select a random simulation
+        simulation = random.choice(list(query))
+        return simulation
+    
+    def get(self, request, category, difficulty=None):
+        # Get a random simulation for this category
+        simulation = self.get_random_simulation(request.user, category, difficulty)
+        
+        if not simulation:
+            messages.error(request, f"No budget simulations available for {category}.")
+            return redirect(f'learn_{category}')
+        
+        # Get all expenses for this simulation
+        expenses = Expense.objects.filter(BudgetSimulation=simulation)
+        
+        context = {
+            'simulation': simulation,
+            'expenses': expenses,
+            'monthly_income': simulation.monthly_income,
+            'difficulty': simulation.get_difficulty_display(),
+            'category': category,
+            'category_display': simulation.get_category_display(),
+        }
+        
+        return render(request, self.template_name, context)
+    
+    def post(self, request, category):
+        # Check if this is an AJAX request or a form submission
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        
+        simulation_id = request.POST.get('simulation_id')
+        selected_expenses = json.loads(request.POST.get('selected_expenses', '[]'))
+        
+        simulation = get_object_or_404(BudgetSimulation, id=simulation_id)
+        all_expenses = Expense.objects.filter(BudgetSimulation=simulation)
+        
+        # Map URL category to database category code
+        category_mapping = {
+            'budget': 'BUD',
+            'investing': 'INV',
+            'savings': 'SAV',
+            'balance': 'BAL',
+            'credit': 'CRD',
+            'taxes': 'TAX',
+        }
+        db_category = category_mapping.get(category, 'BUD')
+        
+        # Calculate total expense and identify essential expenses
+        total_selected = 0
+        essential_expenses = []
+        selected_expense_objects = []
+        
+        for expense_id in selected_expenses:
+            expense = get_object_or_404(Expense, id=expense_id)
+            selected_expense_objects.append(expense)
+            total_selected += float(expense.amount)
+            if expense.essential:
+                essential_expenses.append(expense)
+        
+        # Check if all essential expenses are included
+        all_essential_expenses = all_expenses.filter(essential=True)
+        missing_essential = [e for e in all_essential_expenses if e.id not in selected_expenses]
+        
+        # Check if the budget is within limits
+        is_within_budget = total_selected <= float(simulation.monthly_income)
+        
+        # Determine if the user's budget is successful
+        is_successful = is_within_budget and not missing_essential
+        
+        # Generate feedback
+        feedback = []
+        detailed_feedback = {}
+        
+        # Check for missing essential expenses
+        if missing_essential:
+            for expense in missing_essential:
+                feedback.append(f"{expense.name}: {expense.feedback}")
+                if not detailed_feedback.get('missing_essential'):
+                    detailed_feedback['missing_essential'] = []
+                detailed_feedback['missing_essential'].append({
+                    'id': expense.id,
+                    'name': expense.name,
+                    'amount': float(expense.amount),
+                    'feedback': expense.feedback
+                })
+        
+        # Check if over budget
+        if not is_within_budget:
+            feedback.append(f"Your selected expenses (${total_selected:.2f}) exceed your monthly income (${float(simulation.monthly_income):.2f}).")
+            detailed_feedback['over_budget'] = {
+                'total_selected': total_selected,
+                'monthly_income': float(simulation.monthly_income),
+                'difference': total_selected - float(simulation.monthly_income)
+            }
+            
+            # Check for optional expenses that could be removed
+            optional_expenses = [e for e in selected_expense_objects if not e.essential]
+            if optional_expenses:
+                optional_feedback = []
+                for expense in optional_expenses:
+                    optional_feedback.append({
+                        'id': expense.id,
+                        'name': expense.name,
+                        'amount': float(expense.amount),
+                        'feedback': expense.feedback
+                    })
+                detailed_feedback['optional_expenses'] = optional_feedback
+        
+        # If successful, record progress
+        xp_earned = 0
+        if is_successful:
+            _, created = QuestionProgress.objects.get_or_create(
+                user=request.user,
+                question_id=simulation_id,
+                question_type='BS',
+                category=db_category
+            )
+            
+            # Only add XP if this is the first time completing the simulation
+            if created:
+                xp_mapping = {
+                    'B': 50,
+                    'I': 100,
+                    'A': 150,
+                }
+                xp = xp_mapping.get(simulation.difficulty, 0)
+                xp_earned = xp
+                
+                # Update the user's XP based on category
+                user = request.user
+                xp_field_mapping = {
+                    'BUD': 'budget_xp',
+                    'INV': 'investing_xp',
+                    'SAV': 'savings_xp',
+                    'BAL': 'balance_sheet_xp',
+                    'CRD': 'credit_xp',
+                    'TAX': 'taxes_xp',
+                }
+                xp_field = xp_field_mapping.get(db_category)
+                
+                if xp_field:
+                    current_xp = getattr(user, xp_field)
+                    setattr(user, xp_field, current_xp + xp)
+                    user.save(update_fields=[xp_field])
+                
+                feedback.append(f"Great job! You've earned {xp} {simulation.get_category_display()} XP.")
+            else:
+                feedback.append("Great job creating a balanced budget!")
+        
+        # Select a random feedback item if there are any
+        random_feedback = None
+        if feedback:
+            random_feedback = random.choice(feedback)
+        
+        # Prepare data
+        data = {
+            'is_successful': is_successful,
+            'random_feedback': random_feedback,
+            'detailed_feedback': detailed_feedback,
+            'feedback': feedback,
+            'missing_essential': [{'id': e.id, 'name': e.name, 'amount': float(e.amount), 'feedback': e.feedback} 
+                                for e in missing_essential],
+            'total_selected': total_selected,
+            'monthly_income': float(simulation.monthly_income),
+            'budget_difference': float(simulation.monthly_income) - total_selected,
+            'selected_expenses': [{'id': e.id, 'name': e.name, 'amount': float(e.amount), 'essential': e.essential, 'feedback': e.feedback} 
+                                for e in selected_expense_objects],
+            'category': category,
+        }
+        
+        # If this is an AJAX request, return JSON
+        if is_ajax:
+            return JsonResponse(data)
+        else:
+            # For a regular form submission (after successful completion)
+            # Render the result page with the successful budget
+            
+            # Prepare selected expenses for the result page
+            selected_expenses_data = []
+            for expense in selected_expense_objects:
+                selected_expenses_data.append({
+                    'name': expense.name,
+                    'amount': float(expense.amount),
+                    'essential': expense.essential
+                })
+            
+            # Prepare context for the result page
+            context = {
+                'is_successful': is_successful,
+                'selected_expenses': selected_expense_objects,
+                'selected_expenses_json': json.dumps(selected_expenses_data),
+                'total_selected': total_selected,
+                'monthly_income': float(simulation.monthly_income),
+                'budget_difference': float(simulation.monthly_income) - total_selected,
+                'category': category,
+                'category_display': simulation.get_category_display(),
+                'difficulty': simulation.get_difficulty_display(),
+                'xp_earned': xp_earned
+            }
+            
+            return render(request, 'budgetq/result.html', context)
