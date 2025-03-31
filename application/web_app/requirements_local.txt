@@ -1,0 +1,6 @@
+# This file is used to install requirements for local use of this web app.
+# This is used for the commands adding AI generated content to the web app.
+# These commands should never be run in production.
+dotenv
+openai
+anthropic
