@@ -50,7 +50,10 @@ class FillInTheBlank(models.Model):
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
     question = models.TextField()
     answer = models.TextField()
-    missing_word = models.CharField()
+    missing_word = models.CharField(max_length=100)
+
+    feedback = models.TextField(default="")
+    category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
     def __str__(self):
         return f"Fill in the Blank: {self.question}..."
 
@@ -93,6 +96,7 @@ class BudgetSimulation(models.Model):
     question = models.TextField()
     monthly_income = models.DecimalField(max_digits=10, decimal_places=2)
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
+    category = models.CharField(max_length=3, choices=CATEGORIES, null=True, default='BUD')
 
     def clean(self):
         """
@@ -129,8 +133,18 @@ class Expense(models.Model):
     BudgetSimulation = models.ForeignKey(BudgetSimulation, on_delete=models.CASCADE, related_name='expenses')
     name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    feedback = models.TextField()
+    feedback = models.TextField(help_text="Provide feedback on why this expense is or isn't essential")
     essential = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name}: ${self.amount}" + (" (Essential)" if self.essential else "")
+    
+class FlashCard(models.Model):
+    question = models.CharField(max_length=100)
+    answer = models.BooleanField(default=False)
+    feedback = models.TextField()
+    category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
+    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
+
+    def __str__(self):
+        return f"Flash Card: {self.question} - {self.answer}"

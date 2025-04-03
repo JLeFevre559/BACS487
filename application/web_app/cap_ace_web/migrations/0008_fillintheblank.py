@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('difficulty', models.CharField(choices=[('B', 'Beginner'), ('I', 'Intermediate'), ('A', 'Advanced')], default='B', max_length=1)),
                 ('question', models.TextField()),
                 ('answer', models.TextField()),
-                ('missing_word', models.CharField()),
+                ('missing_word', models.CharField(max_length=100)),
             ],
         ),
     ]

@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from django.contrib.auth import authenticate, get_user_model
 from django.apps import apps
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, BudgetSimulation, Expense
+from .models import (MultipleChoice, MultipleChoiceDistractor, QuestionProgress, BudgetSimulation, Expense,
+                     FlashCard)
 from django.db import models
 from decimal import Decimal
 from django.core.exceptions import ValidationError
@@ -488,3 +489,22 @@ class ExpenseModelTests(TestCase):
         
         # Expense should be automatically deleted due to CASCADE
         self.assertEqual(Expense.objects.count(), 0)
+
+class FlashCardModelTests(TestCase):
+    def setUp(self):
+        """Set up test data."""
+        self.flashcard = FlashCard.objects.create(
+            question="The capital of France is Paris",
+            answer=True,
+            feedback="Paris is the capital of France.",
+            category='GOV',
+            difficulty='B'
+        )
+    
+    def test_flashcard_creation(self):
+        """Test that a flashcard can be created with valid data."""
+        self.assertEqual(self.flashcard.question, "The capital of France is Paris")
+        self.assertTrue(self.flashcard.answer)
+        self.assertEqual(self.flashcard.feedback, "Paris is the capital of France.")
+        self.assertEqual(self.flashcard.category, 'GOV')
+        self.assertEqual(self.flashcard.difficulty, 'B')

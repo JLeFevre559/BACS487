@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from ...models import BudgetSimulation, Expense
+from ...models import BudgetSimulation, Expense, CATEGORIES
 
 
 class Command(BaseCommand):
@@ -33,6 +33,9 @@ class Command(BaseCommand):
         successful_imports = 0
         errors = []
 
+        # Get valid category codes
+        valid_categories = [code for code, _ in CATEGORIES]
+
         for index, simulation_data in enumerate(data, 1):
             try:
                 with transaction.atomic():
@@ -40,6 +43,7 @@ class Command(BaseCommand):
                     question = simulation_data.get('question')
                     monthly_income = simulation_data.get('monthly_income')
                     difficulty = simulation_data.get('difficulty')
+                    category = simulation_data.get('category', 'BUD')  # Default to 'BUD' if not provided
                     expenses = simulation_data.get('expenses', [])
 
                     # Validate required fields
@@ -49,6 +53,8 @@ class Command(BaseCommand):
                         raise ValidationError(f'Simulation {index}: Monthly income is required')
                     if difficulty not in ['B', 'I', 'A']:
                         raise ValidationError(f'Simulation {index}: Difficulty must be B, I, or A')
+                    if category not in valid_categories:
+                        raise ValidationError(f'Simulation {index}: Category {category} is not valid. Must be one of {", ".join(valid_categories)}')
                     if not expenses:
                         raise ValidationError(f'Simulation {index}: At least one expense is required')
 
@@ -56,7 +62,8 @@ class Command(BaseCommand):
                     simulation = BudgetSimulation(
                         question=question,
                         monthly_income=Decimal(str(monthly_income)),
-                        difficulty=difficulty
+                        difficulty=difficulty,
+                        category=category
                     )
 
                     # Check that a question with the same text doesn't already exist
