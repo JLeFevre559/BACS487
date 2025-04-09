@@ -30,6 +30,7 @@
                         <li><a class="dropdown-item" href="{% url 'user_detail' user.pk %}">Profile</a></li>
                         {% if user.is_superuser %}
                             <li><a class="dropdown-item" href="{% url 'user_list' %}">User List</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
                     {% else %}
                         <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
