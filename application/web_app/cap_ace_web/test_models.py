@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth import authenticate, get_user_model
 from django.apps import apps
 from .models import (MultipleChoice, MultipleChoiceDistractor, QuestionProgress, BudgetSimulation, Expense,
-                     FlashCard)
+                     FlashCard, MatchAndDrag, TermsAndDefinitions)
 from django.db import models
 from decimal import Decimal
 from django.core.exceptions import ValidationError
@@ -284,16 +284,16 @@ class QuestionProgressTest(TestCase):
         self.assertEqual(savings_progress, 1)
 
 User = get_user_model()
-class SavingModule(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+# class SavingModule(models.Model):
+#     title = models.CharField(max_length=200)
+#     description = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-class SavingsGoal(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    target_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    current_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    goal_date = models.DateField()
+# class SavingsGoal(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     current_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     goal_date = models.DateField()
 # class BudgetCategory(models.Model):
 #     name = models.CharField(max_length=100)
 
@@ -508,3 +508,26 @@ class FlashCardModelTests(TestCase):
         self.assertEqual(self.flashcard.feedback, "Paris is the capital of France.")
         self.assertEqual(self.flashcard.category, 'GOV')
         self.assertEqual(self.flashcard.difficulty, 'B')
+
+class MatchAndDragModelTests(TestCase):
+    def setUp(self):
+        """Set up test data."""
+        self.match_and_drag = MatchAndDrag.objects.create(
+            category='GOV',
+            difficulty='B'
+        )
+        self.term_and_definition = TermsAndDefinitions.objects.create(
+            term ="Budget",
+            definition="A financial plan",
+            feedback="A budget helps manage finances.",
+            question=self.match_and_drag
+        )
+    
+    def test_match_and_drag_creation(self):
+        """Test that a match and drag question can be created with valid data."""
+        self.assertEqual(self.match_and_drag.category, 'GOV')
+        self.assertEqual(self.match_and_drag.difficulty, 'B')
+        self.assertEqual(self.term_and_definition.term, "Budget")
+        self.assertEqual(self.term_and_definition.definition, "A financial plan")
+        self.assertEqual(self.term_and_definition.feedback, "A budget helps manage finances.")
+        self.assertEqual(self.term_and_definition.question, self.match_and_drag)

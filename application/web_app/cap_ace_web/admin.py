@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import MultipleChoice, MultipleChoiceDistractor, BudgetSimulation, Expense, FlashCard
+from .models import MultipleChoice, MultipleChoiceDistractor, BudgetSimulation, Expense, FlashCard, MatchAndDrag, TermsAndDefinitions
 from django.core.exceptions import ValidationError
 from django.forms.models import BaseInlineFormSet
 from decimal import Decimal
@@ -199,7 +199,25 @@ class FlashCardAdmin(admin.ModelAdmin):
         }),
     )
 
+class MatchAndDragInline(admin.TabularInline):
+    model = TermsAndDefinitions
+    extra = 3
+    min_num = 2
+    max_num = 10
+
+class MatchAndDragAdmin(admin.ModelAdmin):
+    list_display = ('category', 'difficulty')
+    search_fields = ('category', 'difficulty')
+    list_filter = ('category', 'difficulty')
+    inlines = [MatchAndDragInline]
+    fieldsets = (
+        (None, {
+            'fields': ('category', 'difficulty')
+        }),
+    )
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(MultipleChoice, MultipleChoiceAdmin)
 admin.site.register(BudgetSimulation, BudgetSimulationAdmin)
 admin.site.register(FlashCard, FlashCardAdmin)
+admin.site.register(MatchAndDrag, MatchAndDragAdmin)
