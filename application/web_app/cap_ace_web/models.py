@@ -140,7 +140,7 @@ class Expense(models.Model):
         return f"{self.name}: ${self.amount}" + (" (Essential)" if self.essential else "")
     
 class FlashCard(models.Model):
-    question = models.CharField(max_length=100)
+    question = models.CharField(max_length=512)
     answer = models.BooleanField(default=False)
     feedback = models.TextField()
     category = models.CharField(max_length=3, choices=CATEGORIES, null=True)

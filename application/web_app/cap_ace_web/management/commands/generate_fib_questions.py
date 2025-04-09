@@ -1,39 +1,42 @@
 """
-Generate multiple choice questions for financial literacy education.
+Generate fill-in-the-blank questions for financial literacy education.
 """
 import json
 import random
 from typing import List, Dict, Any
 
 from django.db import transaction
-from ...models import MultipleChoice, MultipleChoiceDistractor, CATEGORIES, DIFFICULTIES
+from ...models import FillInTheBlank, CATEGORIES, DIFFICULTIES
 from .base_generation_command import BaseGenerationCommand
 from .ai_utils import extract_json_from_response, is_similar_text
 
-# AI prompt template for generating multiple choice questions
+# AI prompt template for generating fill in the blank questions
 AI_PROMPT = """
-Generate EXACTLY {num} multiple choice questions about {category_display} for teaching financial literacy. Do not generate more or fewer than {num} questions. Each question should have 1 correct answer and 3 distractors (incorrect answers).
+Generate EXACTLY {num} fill-in-the-blank questions about {category_display} for teaching financial literacy. Do not generate more or fewer than {num} questions.
 
 For each question, include:
-1. The question text
-2. The correct answer
-3. Three incorrect answers (distractors)
-4. A detailed explanation/feedback on why the correct answer is right
-5. Difficulty level (B for Beginner, I for Intermediate, A for Advanced)
+1. The complete question text with the blank indicated by "___"
+2. The missing word or phrase that should fill the blank
+3. A detailed explanation/feedback on why this answer is correct
+4. Difficulty level (B for Beginner, I for Intermediate, A for Advanced)
 
-Ensure that each question tests understanding, not just recall. Questions should be engaging and relevant for teaching financial concepts.
+Ensure that each question:
+- Tests understanding, not just recall
+- Has a single, unambiguous missing word or short phrase (1-3 words maximum)
+- Is clear and grammatically correct
+- Has a missing word that is significant to the meaning (not just an article or minor word)
 
 Return your response as a valid JSON array with EXACTLY {num} objects in this format:
 [
   {{
-    "question": "Question text here?",
-    "answer": "Correct answer here",
-    "distractors": ["Incorrect answer 1", "Incorrect answer 2", "Incorrect answer 3"],
-    "feedback": "Detailed explanation of why the correct answer is right",
+    "question": "A financial plan that tracks income and expenses is called a ___.",
+    "answer": "budget",
+    "missing_word": "budget",
+    "feedback": "A budget is a financial plan that helps individuals track and manage their income and expenses. It's a fundamental tool for financial planning and management.",
     "difficulty": "Difficulty level here (B, I, A)",
     "category": "{category_code}"
-  }}
-  {{"json_continuation": "{num}" }}
+  }},
+  ... additional questions ...
 ]
 
 The final JSON array MUST contain EXACTLY {num} question objects, no more and no less.
@@ -43,10 +46,10 @@ Only include the valid JSON array in your response, with no additional explanati
 
 
 class Command(BaseGenerationCommand):
-    help = 'Generate multiple choice questions using AI and add them to the database'
-    content_type_name = "multiple choice questions"
+    help = 'Generate fill-in-the-blank questions using AI and add them to the database'
+    content_type_name = "fill-in-the-blank questions"
     default_batch_size = 5
-    system_message = "You are a financial education expert. Generate multiple choice questions for teaching financial literacy concepts."
+    system_message = "You are a financial education expert. Generate fill-in-the-blank questions for teaching financial literacy concepts."
     
     def add_model_arguments(self, parser):
         """Add model-specific arguments."""
@@ -56,23 +59,26 @@ class Command(BaseGenerationCommand):
             choices=[code for code, _ in CATEGORIES],
             help='Category of questions to generate (will use random category if not specified)'
         )
+        parser.add_argument(
+            '--difficulty', 
+            type=str, 
+            choices=[code for code, _ in DIFFICULTIES],
+            default='B',
+            help='Difficulty level of questions to generate'
+        )
     
     def process_options(self, options: Dict[str, Any], use_random: bool = False) -> Dict[str, Any]:
         """Process command options and return parameters for prompt formatting."""
-        from ...models import CATEGORIES
+        from ...models import CATEGORIES, DIFFICULTIES
         
-        # Use a random category if none was specified or if random was requested
-        # Always use random if use_random is True regardless of whether category is specified
-        if use_random and ('category' not in options or options['category'] is None):
-            # Choose a random category
-            category_codes = [code for code, _ in CATEGORIES]
-            category = random.choice(category_codes)
-            self.stdout.write(self.style.SUCCESS(f"Using randomly selected category: {category}"))
-        elif 'category' in options and options['category'] is not None:
-            # Use the explicitly specified category
+        difficulty = options['difficulty']
+        
+        # If a category is specified and we're not forcing random, use that category
+        if 'category' in options and options['category'] is not None and not use_random:
             category = options['category']
+            self.stdout.write(self.style.SUCCESS(f"Using specified category: {category}"))
         else:
-            # No category specified and not forcing random, still use random
+            # Either no category specified or we're forcing random - select random category
             category_codes = [code for code, _ in CATEGORIES]
             category = random.choice(category_codes)
             self.stdout.write(self.style.SUCCESS(f"Using randomly selected category: {category}"))
@@ -80,9 +86,14 @@ class Command(BaseGenerationCommand):
         # Find the display name for the category
         category_display = next((name for code, name in CATEGORIES if code == category), "Budgeting")
         
+        # Find the display name for the difficulty
+        difficulty_display = next((name for code, name in DIFFICULTIES if code == difficulty), "Beginner")
+        
         return {
             'category_code': category,
-            'category_display': category_display
+            'category_display': category_display,
+            'difficulty': difficulty,
+            'difficulty_display': difficulty_display
         }
         
     def display_generation_summary(self, batch_size: int, max_batches: int, 
@@ -90,7 +101,7 @@ class Command(BaseGenerationCommand):
                                   dry_run: bool) -> None:
         """Display a summary of what will be generated."""
         self.stdout.write(self.style.SUCCESS(
-            f"Generating {batch_size * max_batches} {prompt_params['category_display']} multiple choice questions "
+            f"Generating {batch_size * max_batches} {prompt_params['difficulty_display']} {prompt_params['category_display']} fill-in-the-blank questions "
             f"using {ai_provider.upper()} in {max_batches} batch(es)"
         ))
         
@@ -114,23 +125,28 @@ class Command(BaseGenerationCommand):
             # Parse the JSON
             questions = json.loads(json_content)
             
-            # Remove any metadata objects that might have been added to the JSON array
-            questions = [q for q in questions if "json_continuation" not in q]
-            
             # Validate the structure of each question
             for q in questions:
-                required_fields = ["question", "answer", "distractors", "feedback", "difficulty", "category"]
+                required_fields = ["question", "answer", "missing_word", "feedback", "difficulty", "category"]
                 for field in required_fields:
                     if field not in q:
                         raise ValueError(f"Missing required field '{field}' in question: {q}")
                         
-                if not isinstance(q["distractors"], list):
-                    raise ValueError(f"'distractors' must be a list in question: {q}")
+                # Validate question has a blank
+                if "___" not in q["question"]:
+                    raise ValueError(f"Question does not contain a blank (___): {q['question']}")
                     
-                if len(q["distractors"]) != 3:
-                    raise ValueError(f"Expected 3 distractors, got {len(q['distractors'])} in question: {q}")
+                # Validate missing_word matches answer
+                if q["missing_word"] != q["answer"]:
+                    print(f"Warning: 'missing_word' ({q['missing_word']}) doesn't match 'answer' ({q['answer']}). Using 'answer' as the correct value.")
+                    q["missing_word"] = q["answer"]
                     
-                if q["difficulty"] not in ["B", "I", "A"]:
+                # Validate missing_word is not too long
+                words = q["missing_word"].split()
+                if len(words) > 3:
+                    raise ValueError(f"Missing word/phrase '{q['missing_word']}' is too long (more than 3 words)")
+                    
+                if q["difficulty"] not in [code for code, _ in DIFFICULTIES]:
                     raise ValueError(f"Invalid difficulty '{q['difficulty']}' in question: {q}")
                     
                 if q["category"] not in [code for code, _ in CATEGORIES]:
@@ -157,10 +173,8 @@ class Command(BaseGenerationCommand):
             self.stdout.write(f"Category: {q['category']}")
             self.stdout.write(f"Difficulty: {q['difficulty']}")
             self.stdout.write(f"Question: {q['question']}")
-            self.stdout.write(f"Correct Answer: {q['answer']}")
-            self.stdout.write("Distractors:")
-            for j, d in enumerate(q['distractors'], 1):
-                self.stdout.write(f"  {j}. {d}")
+            self.stdout.write(f"Answer: {q['answer']}")
+            self.stdout.write(f"Missing Word: {q['missing_word']}")
             self.stdout.write(f"Feedback: {q['feedback']}")
     
     @transaction.atomic
@@ -182,12 +196,12 @@ class Command(BaseGenerationCommand):
                 question_text = q['question'].strip()
                 
                 # 1. Exact match check
-                if MultipleChoice.objects.filter(question=question_text).exists():
+                if FillInTheBlank.objects.filter(question=question_text).exists():
                     self.stdout.write(self.style.WARNING(f"Question already exists (exact match): {question_text[:50]}..."))
                     continue
                 
                 # 2. Similarity check - lowercased and stripped of punctuation
-                existing_questions = MultipleChoice.objects.all()
+                existing_questions = FillInTheBlank.objects.all()
                 duplicate_found = False
                 
                 for existing in existing_questions:
@@ -201,23 +215,17 @@ class Command(BaseGenerationCommand):
                 if duplicate_found:
                     continue
                     
-                # Create the multiple choice question
-                mc_question = MultipleChoice(
+                # Create the fill-in-the-blank question
+                fib_question = FillInTheBlank(
                     question=question_text,
                     answer=q['answer'],
+                    missing_word=q['missing_word'],
                     feedback=q['feedback'],
                     difficulty=q['difficulty'],
                     category=q['category']
                 )
-                mc_question.save()
+                fib_question.save()
                 
-                # Create the distractors
-                for distractor in q['distractors']:
-                    MultipleChoiceDistractor.objects.create(
-                        question=mc_question,
-                        distractor=distractor
-                    )
-                    
                 added += 1
                 
             except Exception as e:
