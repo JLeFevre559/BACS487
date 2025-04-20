@@ -120,3 +120,65 @@ nav {
   .content-container {
       flex-direction: column; }
 }
+
+
+/* Quiz Card Container */
+.card.quiz-card {
+  background-color: #ffffff; /* white for strong contrast */
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+/* Card Header */
+.card.quiz-card .card-header {
+  background-color: #004080; /* dark blue accent */
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+
+
+/* Question Text */
+.card.quiz-card .question h4 {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #7fdbff; 
+}
+
+/* Radio Buttons */
+.card.quiz-card .form-check-label {
+  font-size: 1rem;
+  color: #f4f5f9; 
+}
+.card.quiz-card .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Submit & Back Buttons */
+.card.quiz-card .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  
+}
+
+.card.quiz-card .btn-outline-secondary {
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.card.quiz-card .btn-outline-secondary:hover {
+  background-color: #e6f0ff;
+}
+
+/* Submit Button Hover */
+.card.quiz-card .btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+  box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+}
+
+
