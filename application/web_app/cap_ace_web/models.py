@@ -51,7 +51,6 @@ class FillInTheBlank(models.Model):
     question = models.TextField()
     answer = models.TextField()
     missing_word = models.CharField(max_length=100)
-
     feedback = models.TextField(default="")
     category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
     def __str__(self):
