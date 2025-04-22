@@ -5,7 +5,7 @@ from .views import  (Index, UserListView, UserCreateView, UserDetailView, UserUp
 from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from .import views 
-from .game_views import FillInTheBlankListView, FillInTheBlankDetailView, FillInTheBlankCreateView, MultipleChoiceGameView, BudgetSimulationGameView
+from .game_views import  MultipleChoiceGameView, BudgetSimulationGameView, FillInTheBlankCreateView, FillInTheBlankDeleteView, FillInTheBlankDetailView, FillInTheBlankListView, FillInTheBlankGameView
 from .category_views import BudgetView, SavingsView, InvestingView, TaxesView, CreditView, BalanceSheetView
 
 
@@ -41,11 +41,18 @@ urlpatterns = [
     # Play a multiple choice game
     path('learn/<str:category>/multiplechoice/', MultipleChoiceGameView.as_view(), name='play_multiple_choice'),
 
-    # paths to Fill in the Blank games
-    path('fill-blank/', FillInTheBlankListView.as_view(), name='fill_blank_list'),
-    path('fill-blank/create/', FillInTheBlankCreateView.as_view(), name='fill_blank_create'),
-    path('fill-blank/<int:pk>/', FillInTheBlankDetailView.as_view(), name='fill_blank_detail'),
+    
+    #Play a Fill in the Blank game
+    path('learn/<str:category>/fill-blank/', FillInTheBlankGameView.as_view(), name='play_fill_blank'),
+    
+    
+    # # paths to Fill in the Blank games
+    # path('fill-blank/', FillInTheBlankListView.as_view(), name='fill_blank_list'),
+    # path('fill-blank/create/', FillInTheBlankCreateView.as_view(), name='fill_blank_create'),
+    # path('fill-blank/<int:pk>/', FillInTheBlankDetailView.as_view(), name='fill_blank_detail'),
 
     path('learn/<str:category>/budgetsimulation/', BudgetSimulationGameView.as_view(), name='play_budget_simulation'),
     path('learn/<str:category>/budgetsimulation/<str:difficulty>/', BudgetSimulationGameView.as_view(), name='play_budget_simulation_difficulty'),
+
+
 ]
