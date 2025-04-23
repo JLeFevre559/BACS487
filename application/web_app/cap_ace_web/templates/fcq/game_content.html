@@ -1,0 +1,192 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/flash_card.css' %}">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card card-custom shadow">
+                <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">{{ category }} Flash Card</h3>
+                    <span class="badge bg-dark text-primary">{{ card.get_difficulty_display }}</span>
+                </div>
+                <div class="card-body py-4 position-relative">
+                    <!-- Flash Card Container -->
+                    <div class="flash-card-container my-4">
+                        <div class="flash-card" id="flash-card">
+                            <!-- Front of Card -->
+                            <div class="flash-card-front">
+                                <div class="card-icon text-center mb-3">
+                                    <i class="fas fa-question-circle text-primary" style="font-size: 2rem;"></i>
+                                </div>
+                                <div class="question mb-4 text-center">
+                                    <h4>{{ card.question }}</h4>
+                                </div>
+                            </div>
+                            
+                            <!-- Back of Card -->
+                            <div class="flash-card-back d-none">
+                                <div class="answer-result text-center py-3">
+                                    <h4 id="result-heading"></h4>
+                                    <div class="correct-answer py-2 mt-2" id="correct-answer-container">
+                                        <p><strong>Correct answer:</strong> <span id="correct-answer"></span></p>
+                                    </div>
+                                </div>
+                                <div class="feedback my-3">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="fas fa-lightbulb text-warning me-2"></i>Feedback
+                                            </h5>
+                                            <p class="card-text">{{ card.feedback }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- True/False Buttons (shown before answer) -->
+                    <div class="choices-container text-center mt-4" id="choices-container">
+                        <div class="d-flex justify-content-center" role="group">
+                            <button type="button" class="btn btn-outline-success btn-lg mx-3 px-4 py-2 btn-true-false" onclick="selectAnswer('True')">
+                                <i class="fas fa-check me-2"></i>True
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-lg mx-3 px-4 py-2 btn-true-false" onclick="selectAnswer('False')">
+                                <i class="fas fa-times me-2"></i>False
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Next Button (shown after answer) -->
+                    <div class="next-button-container d-none" id="next-button-container">
+                        <button id="next-card-btn" class="btn btn-primary next-btn">
+                            Next Card <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex justify-content-between mt-5">
+                        <a href="{% url 'learn' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Learning
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set appropriate height for the card based on content
+        adjustCardHeight();
+
+        // Add resize listener to adjust heights on window resize
+        window.addEventListener('resize', adjustCardHeight);
+        
+        // Set up next button event listener
+        document.getElementById('next-card-btn').addEventListener('click', function() {
+            window.location.href = "{% url 'play_flash_card' category_code %}";
+        });
+    });
+
+    function adjustCardHeight() {
+        const questionContent = document.querySelector('.question');
+        const cardFront = document.querySelector('.flash-card-front');
+        const cardBack = document.querySelector('.flash-card-back');
+        const cardContainer = document.querySelector('.flash-card-container');
+        const flashCard = document.getElementById('flash-card');
+        
+        if (questionContent && cardFront && cardBack && cardContainer && flashCard) {
+            // Reset heights first to get accurate content height
+            cardFront.style.height = 'auto';
+            cardBack.style.height = 'auto';
+            
+            // Calculate required heights
+            const frontHeight = cardFront.scrollHeight + 50; // Add padding
+            const backHeight = cardBack.scrollHeight + 50;
+            const maxHeight = Math.max(300, frontHeight, backHeight);
+            
+            // Set minimum height
+            cardContainer.style.minHeight = maxHeight + 'px';
+            flashCard.style.minHeight = maxHeight + 'px';
+            cardFront.style.minHeight = maxHeight + 'px';
+            cardBack.style.minHeight = maxHeight + 'px';
+            
+            // Ensure the container has enough space below for buttons
+            document.querySelector('.card-body').style.paddingBottom = 
+                (document.querySelector('.next-button-container').offsetHeight + 60) + 'px';
+        }
+    }
+
+    function selectAnswer(answer) {
+        // Disable buttons to prevent multiple submissions
+        const buttons = document.querySelectorAll('.btn-true-false');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('disabled');
+        });
+        
+        // Get the card ID
+        const cardId = "{{ card.id }}";
+        
+        // Create data for AJAX request
+        const data = new FormData();
+        data.append('card_id', cardId);
+        data.append('answer', answer);
+        data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        // Send AJAX request to check the answer
+        fetch("{% url 'play_flash_card' category_code %}", {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Set result heading with icon
+            const resultHeading = document.getElementById('result-heading');
+            if (data.is_correct) {
+                resultHeading.innerHTML = '<i class="fas fa-check-circle me-2"></i> Correct!';
+                resultHeading.className = 'text-success';
+            } else {
+                resultHeading.innerHTML = '<i class="fas fa-times-circle me-2"></i> Incorrect!';
+                resultHeading.className = 'text-danger';
+            }
+            
+            // Set correct answer text
+            document.getElementById('correct-answer').textContent = data.correct_answer ? 'True' : 'False';
+            
+            // Show/hide correct answer section
+            document.getElementById('correct-answer-container').style.display = (data.is_correct ? 'none' : 'block');
+            
+            // Remove d-none from back side before flipping
+            document.querySelector('.flash-card-back').classList.remove('d-none');
+            
+            // Short delay before flipping for better UX
+            setTimeout(function() {
+                // Add the flipped class
+                document.getElementById('flash-card').classList.add('flipped');
+                
+                // Hide choices container
+                document.getElementById('choices-container').classList.add('d-none');
+                
+                // Show next button container
+                document.getElementById('next-button-container').classList.remove('d-none');
+                
+                // Add success animation if correct
+                if (data.is_correct) {
+                    document.getElementById('flash-card').classList.add('success-animation');
+                }
+                
+                // Update the card to fit content after flip
+                adjustCardHeight();
+            }, 100);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
