@@ -11,7 +11,7 @@
   <p>Your Financial News and Learning Hub</p>
 </div>
 <div class="container">
-    {% comment %} <h3>Stock Ticker</h3>
+    {% comment %} <h3>Stock Ticker</h3> {% endcomment %}
     <ul class="list-group">
       {% for symbol, data in stocks.items %}
         <li class="list-group-item">
@@ -23,12 +23,12 @@
           {% endif %}
         </li>
       {% empty %}
-        <li class="list-group-item">Search</li>
+        <li class="list-group-item"></li>
       {% endfor %}
     </ul>
 
 <!-- space   -->
-<br> {% endcomment %}
+<br> 
 
 
   </div>
