@@ -58,6 +58,8 @@ urlpatterns = [
     path('learn/<str:category>/budgetsimulation/', BudgetSimulationGameView.as_view(), name='play_budget_simulation'),
     path('learn/<str:category>/budgetsimulation/<str:difficulty>/', BudgetSimulationGameView.as_view(), name='play_budget_simulation_difficulty'),
 
+    # Temporary path for prod.
+    path('learn/<str:category>/match-drag/', TemplateView.as_view(template_name='status/under_development.html'), name='play_match_drag'),
     # Special status pages
     path('under-development/', 
          TemplateView.as_view(template_name='status/under_development.html'), 
