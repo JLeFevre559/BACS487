@@ -17,25 +17,6 @@
                 <h3>{{name.title}}</h3>
                 <img src="{% static 'images/'|add:name.title|add:'.png' %}" width="100px" alt="Logo">
             </div>
-            
-            <div class="progress-info">
-                <div class="level-stats">
-                    <div class="level-badge">Number of Attempts</div> <!-- need to potentially change the class to fit with a game specific style or just reuse the learning dashboard style with different data-->
-                    <div class="xp-counter"> XP</div>
-                </div>
-                
-                <div class="progress-section">
-                    <div class="progress-label">
-                        Here is how you're doing
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress" 
-                             style="width: {{ category.progress }}%"
-                             title="Progress to next level"></div>
-                    </div>
-                </div>
-               
-            </div>
                 <div class="card-footer">
                     <a href="{{ name.url }}" class="button primary-button">
                             Play Game
