@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import MultipleChoice, MultipleChoiceDistractor, BudgetSimulation, Expense, FlashCard
+from .models import MultipleChoice, MultipleChoiceDistractor, BudgetSimulation, Expense, FlashCard, MatchAndDrag, TermsAndDefinitions, FillInTheBlank
 from django.core.exceptions import ValidationError
 from django.forms.models import BaseInlineFormSet
 from decimal import Decimal
@@ -78,6 +78,20 @@ class CustomUserAdmin(UserAdmin):
                 obj.taxes_xp = 0
                 
         super().save_model(request, obj, form, change)
+
+
+class FillInTheBlankAdmin(admin.ModelAdmin):
+    list_display = ('question', 'category', 'difficulty')
+    list_filter = ('category', 'difficulty')
+    search_fields = ('question', 'answer', 'feedback', )
+    fieldsets = (
+        (None, {
+            'fields': ('category', 'difficulty')
+        }),
+        ('Question Details', {
+            'fields': ('question', 'answer', 'feedback','missing_word' )
+        }),
+    )
 
 class MultipleChoiceDistractorInline(admin.TabularInline):
     model = MultipleChoiceDistractor
@@ -199,7 +213,29 @@ class FlashCardAdmin(admin.ModelAdmin):
         }),
     )
 
+class MatchAndDragInline(admin.TabularInline):
+    model = TermsAndDefinitions
+    extra = 3
+    min_num = 2
+    max_num = 10
+
+class MatchAndDragAdmin(admin.ModelAdmin):
+    list_display = ('category', 'difficulty')
+    search_fields = ('category', 'difficulty')
+    list_filter = ('category', 'difficulty')
+    inlines = [MatchAndDragInline]
+    fieldsets = (
+        (None, {
+            'fields': ('category', 'difficulty')
+        }),
+    )
+
+
+
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(MultipleChoice, MultipleChoiceAdmin)
 admin.site.register(BudgetSimulation, BudgetSimulationAdmin)
 admin.site.register(FlashCard, FlashCardAdmin)
+admin.site.register(MatchAndDrag, MatchAndDragAdmin)
+admin.site.register(FillInTheBlank, FillInTheBlankAdmin)

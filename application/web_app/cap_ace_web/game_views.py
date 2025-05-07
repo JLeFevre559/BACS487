@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, FillInTheBlank, BudgetSimulation, Expense
+from .models import MultipleChoice, MultipleChoiceDistractor, QuestionProgress, FillInTheBlank, BudgetSimulation, Expense, FlashCard
 from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 from django.shortcuts import render
@@ -23,6 +23,130 @@ class StaffRequiredMixin(UserPassesTestMixin):
         return self.request.user.is_staff
     
 # Fill in the Blank Views
+
+class FillInTheBlankGameView(LoginRequiredMixin, View):
+    template_name = 'fill_blank/game.html'
+    def get_random_question(self, category, user):
+        """Get a random question from the specified category that the user hasn't completed"""
+        category_mapping = {
+            'budget': 'BUD',
+            'investing': 'INV',
+            'savings': 'SAV',
+            'balance': 'BAL',
+            'credit': 'CRD',
+            'taxes': 'TAX',
+        }
+        category = category_mapping[category]
+        # First, get all completed question IDs for this user and category
+        completed_ids = QuestionProgress.objects.filter(
+            user=user,
+            question_type='FIB',
+            category=category
+        ).values_list('question_id', flat=True)
+        
+        # Find questions in this category that haven't been completed
+        available_questions = FillInTheBlank.objects.filter(
+            category=category
+        ).exclude(
+            id__in=completed_ids
+        )
+        
+        # If there are no uncompleted questions, get all questions in this category
+        if not available_questions.exists():
+            available_questions = FillInTheBlank.objects.filter(category=category)
+            
+        # If there are still no questions, return None
+        if not available_questions.exists():
+            return None
+         # Select a random question
+        question = random.choice(list(available_questions))
+        return question
+    
+    def get(self, request, category):
+        # Get a random question for this category
+        question = self.get_random_question(category, request.user)
+        
+        if not question:
+            messages.error(request, f"No questions available for this category.")
+            return redirect('learn')
+        
+        context = {
+            'question': question,
+            'category': question.get_category_display(),
+            'category_code': category,
+        }
+        
+        return render(request, self.template_name, context)
+    def post(self, request, category):
+        inp_category = category
+        category_mapping = {
+            'budget': 'BUD',
+            'investing': 'INV',
+            'savings': 'SAV',
+            'balance': 'BAL',
+            'credit': 'CRD',
+            'taxes': 'TAX',
+        }
+        category = category_mapping[category]
+        question_id = request.POST.get('question_id')
+        selected_answer = request.POST.get('missing_word')
+        
+        question = get_object_or_404(FillInTheBlank, id=question_id)
+        
+        # Check if the answer is correct
+        is_correct = (selected_answer == question.missing_word)
+        
+        # If this is first time completing this question
+        if is_correct:
+            # Check if the question has already been completed
+            _, created = QuestionProgress.objects.get_or_create(
+                user=request.user,
+                question_id=question_id,
+                question_type='FIB',
+                category=category
+            )
+            
+            # Only add XP if this is the first time completing the question
+            if created:
+                # Determine which XP field to update based on category
+                xp_field_mapping = {
+                    'BUD': 'budget_xp',
+                    'INV': 'investing_xp',
+                    'SAV': 'savings_xp',
+                    'BAL': 'balance_sheet_xp',
+                    'CRD': 'credit_xp',
+                    'TAX': 'taxes_xp',
+                }
+                
+                # Get the field name to update
+                xp_field = xp_field_mapping.get(category)
+
+                xp_mapping = {
+                    'B': 50,
+                    'I': 100,
+                    'A': 150,
+                }
+                xp = xp_mapping.get(question.difficulty, 0)
+                
+                # Update the user's XP (add 10 XP per question)
+                if xp_field:
+                    user = request.user
+                    current_xp = getattr(user, xp_field)
+                    setattr(user, xp_field, current_xp + xp)
+                    user.save(update_fields=[xp_field])
+        
+        context = {
+            'question': question,
+            'selected_answer': selected_answer,
+            'is_correct': is_correct,
+            'category_code': category,
+            'next_url': reverse('play_fill_blank', kwargs={'category': inp_category}),
+            'home_url': reverse('learn'),
+        }
+        
+        return render(request, 'multiple_choice/result.html', context)
+    
+
 class FillInTheBlankListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     model = FillInTheBlank
     template_name = 'fill_blank/list.html'
@@ -524,3 +648,152 @@ class BudgetSimulationGameView(LoginRequiredMixin, View):
             }
             
             return render(request, 'budgetq/result.html', context)
+        
+class FlashCardGameView(LoginRequiredMixin, View):
+    template_name = 'fcq/game.html'
+    
+    def get_random_card(self, category, user, exclude_id=None):
+        """Get a random flash card from the specified category that the user hasn't completed"""
+        category_mapping = {
+            'budget': 'BUD',
+            'investing': 'INV',
+            'savings': 'SAV',
+            'balance': 'BAL',
+            'credit': 'CRD',
+            'taxes': 'TAX',
+        }
+        category = category_mapping[category]
+        
+        # First, get all completed card IDs for this user and category
+        completed_ids = QuestionProgress.objects.filter(
+            user=user,
+            question_type='FC',
+            category=category
+        ).values_list('question_id', flat=True)
+        
+        # Find cards in this category that haven't been completed
+        query = FlashCard.objects.filter(category=category)
+        
+        # Exclude current card if provided
+        if exclude_id:
+            query = query.exclude(id=exclude_id)
+            
+        # Exclude completed cards
+        available_cards = query.exclude(id__in=completed_ids)
+        
+        # If there are no uncompleted cards, get all cards in this category except current
+        if not available_cards.exists():
+            available_cards = FlashCard.objects.filter(category=category)
+            if exclude_id:
+                available_cards = available_cards.exclude(id=exclude_id)
+            
+        # If there are still no cards, return None
+        if not available_cards.exists():
+            return None
+            
+        # Select a random card
+        card = random.choice(list(available_cards))
+        return card
+    
+    def get(self, request, category):
+        # Check if we're processing a POST response (redirected after form submit)
+        last_card_id = request.session.pop('last_card_id', None)
+        is_correct = request.session.pop('is_correct', None)
+        
+        # Get a random card for this category
+        if last_card_id:
+            card = self.get_random_card(category, request.user, exclude_id=last_card_id)
+        else:
+            card = self.get_random_card(category, request.user)
+        
+        if not card:
+            messages.error(request, f"No flash cards available for this category.")
+            return redirect('learn')
+        
+        context = {
+            'card': card,
+            'category': card.get_category_display(),
+            'category_code': category,
+            'last_result': {
+                'is_correct': is_correct,
+            } if is_correct is not None else None
+        }
+        
+        return render(request, self.template_name, context)
+    
+    def post(self, request, category):
+        inp_category = category
+        category_mapping = {
+            'budget': 'BUD',
+            'investing': 'INV',
+            'savings': 'SAV',
+            'balance': 'BAL',
+            'credit': 'CRD',
+            'taxes': 'TAX',
+        }
+        category = category_mapping[category]
+        card_id = request.POST.get('card_id')
+        selected_answer = request.POST.get('answer')
+        
+        # Convert string to boolean to match model field
+        selected_answer_bool = (selected_answer.lower() == 'true')
+        
+        card = get_object_or_404(FlashCard, id=card_id)
+        
+        # Check if the answer is correct
+        is_correct = (selected_answer_bool == card.answer)
+        
+        # If this is first time completing this card and answer is correct
+        if is_correct:
+            # Check if the card has already been completed
+            _, created = QuestionProgress.objects.get_or_create(
+                user=request.user,
+                question_id=card_id,
+                question_type='FC',
+                category=category
+            )
+            
+            # Only add XP if this is the first time completing the card
+            if created:
+                # Determine which XP field to update based on category
+                xp_field_mapping = {
+                    'BUD': 'budget_xp',
+                    'INV': 'investing_xp',
+                    'SAV': 'savings_xp',
+                    'BAL': 'balance_sheet_xp',
+                    'CRD': 'credit_xp',
+                    'TAX': 'taxes_xp',
+                }
+                
+                # Get the field name to update
+                xp_field = xp_field_mapping.get(category)
+
+                # XP mapping based on difficulty
+                xp_mapping = {
+                    'B': 50,
+                    'I': 100,
+                    'A': 150,
+                }
+                xp = xp_mapping.get(card.difficulty, 0)
+                
+                # Update the user's XP
+                if xp_field:
+                    user = request.user
+                    current_xp = getattr(user, xp_field)
+                    setattr(user, xp_field, current_xp + xp)
+                    user.save(update_fields=[xp_field])
+        
+        # AJAX request for card flipping
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'is_correct': is_correct,
+                'correct_answer': card.answer,
+                'feedback': card.feedback
+            })
+        
+        # Store information in session for PRG pattern
+        request.session['last_card_id'] = card_id
+        request.session['is_correct'] = is_correct
+        
+        # Redirect to GET to avoid form resubmission issues
+        return redirect(reverse('play_flash_card', kwargs={'category': inp_category}))

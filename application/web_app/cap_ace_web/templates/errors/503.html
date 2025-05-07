@@ -1,0 +1,27 @@
+{% extends 'theme.html' %}
+
+{% block title %}503 - Service Unavailable{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Service Unavailable</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">503</h1>
+                    <p class="lead">The server is currently unavailable.</p>
+                    <p>{{ error_message|default:"We're sorry, but our service is temporarily unavailable due to maintenance or capacity issues. Please try again later." }}</p>
+                    {% if retry_after %}
+                    <p>You can try again in {{ retry_after }} seconds.</p>
+                    {% endif %}
+                    <div class="mt-4">
+                        <button onclick="window.location.reload()" class="btn btn-primary">Try Again</button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

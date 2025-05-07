@@ -50,12 +50,13 @@ class FillInTheBlank(models.Model):
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
     question = models.TextField()
     answer = models.TextField()
-    missing_word = models.CharField(max_length=100)
-
     feedback = models.TextField(default="")
     category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
+    missing_word = models.CharField(max_length = 100)
     def __str__(self):
         return f"Fill in the Blank: {self.question}..."
+
+
 
 
 class MultipleChoice(models.Model):
@@ -140,7 +141,7 @@ class Expense(models.Model):
         return f"{self.name}: ${self.amount}" + (" (Essential)" if self.essential else "")
     
 class FlashCard(models.Model):
-    question = models.CharField(max_length=100)
+    question = models.CharField(max_length=512)
     answer = models.BooleanField(default=False)
     feedback = models.TextField()
     category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
@@ -148,3 +149,20 @@ class FlashCard(models.Model):
 
     def __str__(self):
         return f"Flash Card: {self.question} - {self.answer}"
+
+class MatchAndDrag(models.Model):
+    feedback = models.TextField()
+    category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
+    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
+
+    def __str__(self):
+        return f"Match and Drag: {self.id}"
+    
+class TermsAndDefinitions(models.Model):
+    term = models.CharField(max_length=100)
+    definition = models.TextField()
+    feedback = models.TextField()
+    question = models.ForeignKey(MatchAndDrag, on_delete=models.CASCADE, related_name='terms_and_definitions')
+
+    def __str__(self):
+        return f"Term: {self.term} - Definition: {self.definition}"

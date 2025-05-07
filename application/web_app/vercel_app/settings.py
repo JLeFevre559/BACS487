@@ -34,7 +34,7 @@ LOGIN_URL = (
 SECRET_KEY = "django-insecure-=cldztbc4jg&xl0!x673!*v2_=p$$eu)=7*f#d0#zs$44xx-h^"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -73,7 +73,7 @@ ROOT_URLCONF = "vercel_app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["cap_ace_web/templates/"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -176,4 +176,8 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'  # Where to go after login
 LOGOUT_REDIRECT_URL = 'home'     # Where to go after logout
 
-
+# Default error pages
+HANDLER400 = 'cap_ace_web.views.bad_request'
+HANDLER403 = 'cap_ace_web.views.permission_denied'
+HANDLER404 = 'cap_ace_web.views.page_not_found'
+HANDLER500 = 'cap_ace_web.views.server_error'

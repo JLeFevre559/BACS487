@@ -1,0 +1,24 @@
+{% extends 'theme.html' %}
+
+{% block title %}502 - Bad Gateway{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Bad Gateway</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">502</h1>
+                    <p class="lead">The server received an invalid response from an upstream server.</p>
+                    <p>{{ error_message|default:"We're experiencing issues with our upstream services. Our team has been notified of the problem." }}</p>
+                    <div class="mt-4">
+                        <button onclick="window.location.reload()" class="btn btn-primary">Try Again</button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
