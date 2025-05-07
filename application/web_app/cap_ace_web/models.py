@@ -50,12 +50,13 @@ class FillInTheBlank(models.Model):
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, default='B')
     question = models.TextField()
     answer = models.TextField()
-    missing_word = models.CharField(max_length=100)
-
     feedback = models.TextField(default="")
     category = models.CharField(max_length=3, choices=CATEGORIES, null=True)
+    missing_word = models.CharField(max_length = 100)
     def __str__(self):
         return f"Fill in the Blank: {self.question}..."
+
+
 
 
 class MultipleChoice(models.Model):

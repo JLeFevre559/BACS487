@@ -14,7 +14,6 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
         <div class="navbar-nav">
             <a class="nav-item nav-link text-light" href="{% url 'learn' %}" style="font-size: 1.1rem; margin-right: 20px;">Learn</a>
-            <a class="nav-item nav-link text-light" href="#" style="font-size: 1.1rem; margin-right: 20px;">Your Progress</a>
 
             <!-- Dropdown Menu for Login & User List -->
             <div class="nav-item dropdown">
@@ -32,6 +31,7 @@
                             <li><a class="dropdown-item" href="{% url 'user_list' %}">User List</a></li>
                             <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
                         <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
                     {% endif %}

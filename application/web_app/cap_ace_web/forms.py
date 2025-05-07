@@ -60,10 +60,9 @@ class StockTickerForm(forms.Form):
 class FillInTheBlankForm(forms.ModelForm):
     class Meta:
         model = FillInTheBlank
-        fields = ['question', 'answer', 'missing_word','difficulty']
+        fields = ['difficulty','question', 'answer', 'feedback','category','missing_word']
         widget=forms.TextInput(attrs={'placeholder': 'Enter Missing Word', 'class': 'form-control'})
     
-
 
 class MultipleChoiceForm(forms.ModelForm):
     class Meta:

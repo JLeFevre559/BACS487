@@ -1,0 +1,24 @@
+{% extends 'theme.html' %}
+
+{% block title %}403 - Forbidden{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Access Denied</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">403</h1>
+                    <p class="lead">You don't have permission to access this resource.</p>
+                    <p>{{ error_message|default:"Your account doesn't have sufficient privileges to access this page." }}</p>
+                    <div class="mt-4">
+                        <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

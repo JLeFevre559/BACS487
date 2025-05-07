@@ -1,0 +1,214 @@
+/* Flash Card Styles */
+:root {
+    --bs-blue: hsl(224, 83%, 52%);
+    --bs-light: #fffafa;
+    --bs-card: #000408;
+    --bs-primary-rgb: rgb(1,19,45);
+
+}
+
+.flash-card-container {
+    perspective: 1000px;
+    margin: 0 auto;
+    min-height: 350px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.flash-card {
+    position: relative;
+    width: 100%;
+    min-height: 350px;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1);
+    background-color: var(--bs-primary-rgb);
+    color: var(--bs-light);
+    margin-bottom: 20px;
+}
+
+.flash-card-front, .flash-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--bs-primary-rgb);
+    color: var(--bs-light);
+    overflow: auto;
+}
+
+.flash-card-front {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.flash-card-back {
+    background-color: var(--bs-primary-rgb);
+    transform: rotateY(180deg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.flash-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.choices-container {
+    margin-top: 2rem;
+}
+
+.btn-true-false {
+    min-width: 120px;
+    transition: all 0.3s;
+    margin: 0 10px;
+}
+
+.btn-true-false:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for feedback appearance */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.feedback {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Result styling */
+.text-success {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.text-danger {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.correct-answer {
+    background-color: rgba(40, 167, 69, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* Card icon styling */
+.card-icon {
+    margin-bottom: 15px;
+}
+
+/* Next button styling */
+.next-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    animation: fadeIn 0.5s ease-in-out;
+    z-index: 10;
+    position: relative;
+}
+
+.next-btn {
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+}
+
+.next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.next-btn i {
+    margin-left: 8px;
+}
+
+/* Add animation for success similar to Budget_Simulation.css */
+@keyframes success-pulse {
+    0% { box-shadow: -6px 8px 10px rgba(40, 167, 69, 0.1); }
+    50% { box-shadow:  -6px 8px 10px rgba(40, 167, 69, 0.6); }
+    100% { box-shadow:  -6px 8px 10px  rgba(40, 167, 69, 0.1); }
+}
+
+.success-animation {
+    animation: success-pulse 5s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .flash-card-container {
+        min-height: 250px;
+    }
+    
+    .flash-card {
+        min-height: 250px;
+    }
+    
+    .choices-container .d-flex {
+        flex-direction: column;
+    }
+    
+    .btn-true-false {
+        margin: 5px 0;
+    }
+}
+
+/* Card badge styling */
+.card-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+/* Card styling to match the theme */
+.card-custom {
+    background-color: var(--bs-primary-rgb);
+    color: var(--bs-light);
+    margin: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(234, 230, 230, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header-custom {
+    background-color: var(--bs-card);
+    color: var(--bs-light);
+    text-align: center;
+    padding: 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card{
+    padding: 0px;
+    margin: 0px;
+}
+
+.mainBox{
+    padding: 0px !important;
+    margin: 0px;
+}
+
+p{
+    font-size: .9rem;
+}
+
+.feedback > .card{
+    box-shadow: unset  !important;
+}

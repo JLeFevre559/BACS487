@@ -1,0 +1,37 @@
+{% extends 'theme.html' %}
+
+{% block title %}301 - Moved Permanently{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Moved Permanently</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">301</h1>
+                    <p class="lead">This resource has been permanently moved.</p>
+                    <p>The page you are looking for has permanently moved to a new location.</p>
+                    <p>You will be redirected automatically in <span id="countdown">5</span> seconds.</p>
+                    <a href="{{ new_url|default:'/' }}" class="btn btn-primary mt-3">Go to New Location</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let seconds = 5;
+    const countdownElement = document.getElementById('countdown');
+    
+    const interval = setInterval(function() {
+        seconds--;
+        countdownElement.textContent = seconds;
+        
+        if (seconds <= 0) {
+            clearInterval(interval);
+            window.location.href = "{{ new_url|default:'/' }}";
+        }
+    }, 1000);
+</script>
+{% endblock content %}

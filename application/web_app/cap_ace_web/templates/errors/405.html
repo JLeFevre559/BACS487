@@ -1,0 +1,24 @@
+{% extends 'theme.html' %}
+
+{% block title %}405 - Method Not Allowed{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Method Not Allowed</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">405</h1>
+                    <p class="lead">The request method is not supported for this resource.</p>
+                    <p>{{ error_message|default:"The method specified in the request is not allowed for the resource identified by the request URI." }}</p>
+                    <div class="mt-4">
+                        <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,22 @@
+{% extends 'theme.html' %}
+
+{% block title %}Maintenance{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Site Under Maintenance</div>
+                <div class="card-body text-center">
+                    <i class="fa fa-cogs fa-4x mb-3" aria-hidden="true"></i>
+                    <h2>We'll be back soon!</h2>
+                    <p class="lead">Our website is currently undergoing scheduled maintenance.</p>
+                    <p>We apologize for any inconvenience. Please check back in a little while.</p>
+                    <p class="text-muted mt-3">Expected completion: {{ maintenance_end_time|default:"Soon" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

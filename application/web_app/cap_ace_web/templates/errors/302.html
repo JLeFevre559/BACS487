@@ -1,0 +1,36 @@
+{% extends 'theme.html' %}
+
+{% block title %}302 - Temporary Redirect{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Temporary Redirect</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">302</h1>
+                    <p class="lead">This resource is temporarily available at a different location.</p>
+                    <p>You will be redirected automatically in <span id="countdown">3</span> seconds.</p>
+                    <a href="{{ redirect_url|default:'/' }}" class="btn btn-primary mt-3">Go to Temporary Location</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let seconds = 3;
+    const countdownElement = document.getElementById('countdown');
+    
+    const interval = setInterval(function() {
+        seconds--;
+        countdownElement.textContent = seconds;
+        
+        if (seconds <= 0) {
+            clearInterval(interval);
+            window.location.href = "{{ redirect_url|default:'/' }}";
+        }
+    }, 1000);
+</script>
+{% endblock content %}
