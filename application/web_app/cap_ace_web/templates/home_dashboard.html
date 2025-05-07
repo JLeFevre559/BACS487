@@ -11,7 +11,7 @@
   <p>Your Financial News and Learning Hub</p>
 </div>
 <div class="container">
-    <h3>Stock Ticker</h3>
+    {% comment %} <h3>Stock Ticker</h3>
     <ul class="list-group">
       {% for symbol, data in stocks.items %}
         <li class="list-group-item">
@@ -28,7 +28,7 @@
     </ul>
 
 <!-- space   -->
-<br>
+<br> {% endcomment %}
 
 
   </div>
@@ -36,22 +36,22 @@
 <div class="dashboard-grid">
   <div class="card card-news">
     <h3>News</h3>
-    <p><a href="https://www.cnbc.com" target="_blank" class="button">Latest News</a></p>
+    <p><a href="https://finance.yahoo.com/" target="_blank" class="button">Latest News</a></p>
   </div>
 
   <div class="card card-crypto">
     <h3>Crypto</h3>
-    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+    <p><a href="https://finance.yahoo.com/markets/crypto/all/" target="_blank" class="button">Data here</a></p>
   </div>
 
   <div class="card card-gainers">
     <h3>Stocks Biggest Gainers</h3>
-    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+    <p><a href="https://finance.yahoo.com/markets/stocks/gainers/" target="_blank" class="button">Data here</a></p>
   </div>
 
   <div class="card card-losers">
     <h3>Stocks Biggest Losers</h3>
-    <p><a href="https://www.cnbc.com" target="_blank" class="button">Data here</a></p>
+    <p><a href="https://finance.yahoo.com/markets/stocks/losers/" target="_blank" class="button">Data here</a></p>
   </div>
 
   
