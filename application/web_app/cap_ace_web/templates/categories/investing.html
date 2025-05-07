@@ -2,29 +2,29 @@
 {% block content %}
 {% load static %}
 
-<div class="card-header">
-    <h2 class="section-title">Learn About Investing</h2>
-    <div class="stats-summary">
-        <p>Please Select A Learning Game</p>
-    </div>
-    <div class="dashboard-grid">
-    
-    
-        {% for code, name in learning_games.items %}
-        <div class="card learning-card">
-            <div class="card-header">
-                <i class="{{ category.icon }}"></i>
-                <h3>{{name.title}}</h3>
-                <img src="{% static 'images/'|add:name.title|add:'.png' %}" width="100px" alt="Logo">
-            </div>
-            
-                <div class="card-footer">
-                    <a href="{{ name.url }}" class="button primary-button">
-                            Play Game
-                    </a>
-                </div>
+
+<h2 class="section-title">Learn About Investing</h2>
+<div class="stats-summary">
+    <p>Please Select A Learning Game</p>
+</div>
+<div class="dashboard-grid">
+
+
+    {% for code, name in learning_games.items %}
+    <div class="card learning-card">
+        <div class="card-header">
+            <i class="{{ category.icon }}"></i>
+            <h3>{{name.title}}</h3>
+            <img src="{% static 'images/'|add:name.title|add:'.png' %}" width="100px" alt="Logo">
         </div>
-            {% endfor %}
-            
+        
+            <div class="card-footer">
+                <a href="{{ name.url }}" class="button primary-button">
+                        Play Game
+                </a>
+            </div>
+    </div>
+        {% endfor %}
+        
 
 {% endblock %}
