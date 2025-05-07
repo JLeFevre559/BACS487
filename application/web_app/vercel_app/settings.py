@@ -73,7 +73,7 @@ ROOT_URLCONF = "vercel_app.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["cap_ace_web/templates/"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
