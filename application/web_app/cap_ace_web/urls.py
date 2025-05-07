@@ -8,7 +8,7 @@ from .import views
 from .game_views import  (MultipleChoiceGameView, BudgetSimulationGameView, FillInTheBlankCreateView, FillInTheBlankDeleteView, FillInTheBlankDetailView, FillInTheBlankListView, 
                           FillInTheBlankGameView, FlashCardGameView)
 from .category_views import BudgetView, SavingsView, InvestingView, TaxesView, CreditView, BalanceSheetView
-
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("", Index.as_view(), name="index"),
@@ -58,5 +58,22 @@ urlpatterns = [
     path('learn/<str:category>/budgetsimulation/', BudgetSimulationGameView.as_view(), name='play_budget_simulation'),
     path('learn/<str:category>/budgetsimulation/<str:difficulty>/', BudgetSimulationGameView.as_view(), name='play_budget_simulation_difficulty'),
 
-
+    # Special status pages
+    path('under-development/', 
+         TemplateView.as_view(template_name='status/under_development.html'), 
+         name='under_development'),
+    path('maintenance/', 
+         TemplateView.as_view(template_name='status/maintenance.html'), 
+         name='maintenance'),
+    
+    # For testing status pages during development
+    path('status/200/', 
+         TemplateView.as_view(template_name='errors/200.html'), 
+         name='status_200'),
+    path('status/404/', 
+         views.page_not_found, 
+         name='status_404'),
+    path('status/500/', 
+         views.server_error, 
+         name='status_500'),
 ]

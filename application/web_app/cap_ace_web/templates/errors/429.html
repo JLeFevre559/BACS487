@@ -1,0 +1,26 @@
+{% extends 'theme.html' %}
+
+{% block title %}429 - Too Many Requests{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Rate Limit Exceeded</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">429</h1>
+                    <p class="lead">Too many requests.</p>
+                    <p>{{ error_message|default:"You have sent too many requests in a given amount of time. Please try again later." }}</p>
+                    {% if retry_after %}
+                    <p>You can try again in {{ retry_after }} seconds.</p>
+                    {% endif %}
+                    <div class="mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

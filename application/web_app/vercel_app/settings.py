@@ -176,4 +176,8 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'  # Where to go after login
 LOGOUT_REDIRECT_URL = 'home'     # Where to go after logout
 
-
+# Default error pages
+HANDLER400 = 'cap_ace_web.views.bad_request'
+HANDLER403 = 'cap_ace_web.views.permission_denied'
+HANDLER404 = 'cap_ace_web.views.page_not_found'
+HANDLER500 = 'cap_ace_web.views.server_error'

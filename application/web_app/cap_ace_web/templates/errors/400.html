@@ -1,0 +1,24 @@
+{% extends 'theme.html' %}
+
+{% block title %}400 - Bad Request{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Bad Request</div>
+                <div class="card-body text-center">
+                    <h1 class="display-1">400</h1>
+                    <p class="lead">The server could not understand the request.</p>
+                    <p>{{ error_message|default:"There appears to be an error in your request. Please check your data and try again." }}</p>
+                    <div class="mt-4">
+                        <a href="javascript:history.back()" class="btn btn-primary">Go Back</a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -313,3 +313,21 @@ def register(request):
             return redirect('home')  # Redirect to home or dashboard
         
     return render(request, 'registration/register.html')
+
+def bad_request(request, exception=None):
+    return render(request, 'errors/400.html', status=400)
+
+def permission_denied(request, exception=None):
+    return render(request, 'errors/403.html', status=403)
+
+def page_not_found(request, exception=None):
+    return render(request, 'errors/404.html', status=404)
+
+def server_error(request):
+    return render(request, 'errors/500.html', status=500)
+
+def method_not_allowed(request, exception=None):
+    return render(request, 'errors/405.html', status=405)
+
+def too_many_requests(request, exception=None):
+    return render(request, 'errors/429.html', status=429)

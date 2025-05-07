@@ -1,0 +1,38 @@
+{% extends 'theme.html' %}
+
+{% block title %}Under Development{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Under Development</div>
+                <div class="card-body text-center">
+                    <i class="fa fa-hard-hat fa-4x mb-4 text-warning" aria-hidden="true"></i>
+                    <h1 class="display-4">Coming Soon</h1>
+                    <p class="lead">This section of our website is currently under development.</p>
+                    <p>{{ message|default:"We're working hard to bring you new features and improvements. Please check back soon." }}</p>
+                    
+                    {% if expected_date %}
+                    <div class="alert alert-info mt-3">
+                        <p class="mb-0">Expected completion: {{ expected_date }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if contact_email %}
+                    <p class="mt-3">For questions or updates, contact: <a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary">Return to Home</a>
+                        {% if alternative_url %}
+                        <a href="{{ alternative_url }}" class="btn btn-outline-secondary">{{ alternative_text|default:"View Alternative" }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
